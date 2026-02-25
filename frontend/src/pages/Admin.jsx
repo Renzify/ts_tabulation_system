@@ -9,199 +9,192 @@ import {
 } from "lucide-react";
 
 function Admin() {
-  const eventModalRef = useRef(null);
-  const competitionModalRef = useRef(null);
-  const categoryModalRef = useRef(null);
-  const choiceModalRef = useRef(null);
-  const subCategoryModalRef = useRef(null);
+  const modalRef = useRef(null);
 
   const [events, setEvents] = useState([]);
-  const [eventInput, setEventInput] = useState("");
-  const [competitionInput, setCompetitionInput] = useState("");
-  const [categoryInput, setCategoryInput] = useState("");
-  const [choiceInput, setChoiceInput] = useState("");
-  const [subCategoryInput, setSubCategoryInput] = useState("");
+  const [input, setInput] = useState("");
+  const [modalConfig, setModalConfig] = useState({
+    type: null,
+    eventId: null,
+    categoryId: null,
+  });
 
-  const [selectedEventId, setSelectedEventId] = useState(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-
-  const handleAddEvent = () => {
-    if (eventInput.trim() === "") return;
-    setEvents([
-      ...events,
-      { id: Date.now(), name: eventInput, competition: null },
-    ]);
-    setEventInput("");
-    eventModalRef.current.close();
+  // One function to open the modal — just pass what type and which IDs
+  const openModal = (type, eventId = null, categoryId = null) => {
+    setInput("");
+    setModalConfig({ type, eventId, categoryId });
+    modalRef.current.showModal();
   };
 
-  const handleAddCompetition = () => {
-    if (competitionInput.trim() === "") return;
-    setEvents(
-      events.map((event) =>
-        event.id === selectedEventId
-          ? {
-              ...event,
-              competition: {
-                id: Date.now(),
-                name: competitionInput,
-                categories: [],
-              },
-            }
-          : event,
-      ),
-    );
-    setCompetitionInput("");
-    competitionModalRef.current.close();
+  const handleConfirm = () => {
+    if (input.trim() === "") return;
+    const { type, eventId, categoryId } = modalConfig;
+
+    if (type === "event") {
+      setEvents([
+        ...events,
+        { id: Date.now(), name: input, competition: null },
+      ]);
+    }
+
+    if (type === "competition") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                competition: { id: Date.now(), name: input, categories: [] },
+              }
+            : event,
+        ),
+      );
+    }
+
+    if (type === "category") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                competition: {
+                  ...event.competition,
+                  categories: [
+                    ...event.competition.categories,
+                    {
+                      id: Date.now(),
+                      name: input,
+                      choices: [],
+                      subCategories: [],
+                    },
+                  ],
+                },
+              }
+            : event,
+        ),
+      );
+    }
+
+    if (type === "choice") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                competition: {
+                  ...event.competition,
+                  categories: event.competition.categories.map((cat) =>
+                    cat.id === categoryId
+                      ? {
+                          ...cat,
+                          choices: [
+                            ...cat.choices,
+                            { id: Date.now(), name: input },
+                          ],
+                        }
+                      : cat,
+                  ),
+                },
+              }
+            : event,
+        ),
+      );
+    }
+
+    if (type === "subCategory") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                competition: {
+                  ...event.competition,
+                  categories: event.competition.categories.map((cat) =>
+                    cat.id === categoryId
+                      ? {
+                          ...cat,
+                          subCategories: [
+                            ...cat.subCategories,
+                            { id: Date.now(), name: input, choices: [] },
+                          ],
+                        }
+                      : cat,
+                  ),
+                },
+              }
+            : event,
+        ),
+      );
+    }
+
+    setInput("");
+    modalRef.current.close();
   };
 
-  const handleAddCategory = () => {
-    if (categoryInput.trim() === "") return;
-    setEvents(
-      events.map((event) =>
-        event.id === selectedEventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: [
-                  ...event.competition.categories,
-                  {
-                    id: Date.now(),
-                    name: categoryInput,
-                    choices: [],
-                    subCategories: [],
-                  },
-                ],
-              },
-            }
-          : event,
-      ),
-    );
-    setCategoryInput("");
-    categoryModalRef.current.close();
+  // Map type to human-readable labels
+  const modalLabels = {
+    event: {
+      title: "Add Event",
+      label: "Event name:",
+      placeholder: "Event name",
+    },
+    competition: {
+      title: "Add Competition",
+      label: "Competition name:",
+      placeholder: "Competition name",
+    },
+    category: {
+      title: "Add Category",
+      label: "Category name:",
+      placeholder: "Category name",
+    },
+    choice: {
+      title: "Add Choice",
+      label: "Choice name:",
+      placeholder: "Choice name",
+    },
+    subCategory: {
+      title: "Add Sub-Category",
+      label: "Sub-category name:",
+      placeholder: "Sub-category name",
+    },
   };
 
-  const handleAddChoice = () => {
-    if (choiceInput.trim() === "") return;
-    setEvents(
-      events.map((event) =>
-        event.id === selectedEventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: event.competition.categories.map((cat) =>
-                  cat.id === selectedCategoryId
-                    ? {
-                        ...cat,
-                        choices: [
-                          ...cat.choices,
-                          { id: Date.now(), name: choiceInput },
-                        ],
-                      }
-                    : cat,
-                ),
-              },
-            }
-          : event,
-      ),
-    );
-    setChoiceInput("");
-    choiceModalRef.current.close();
-  };
-
-  const handleAddSubCategory = () => {
-    if (subCategoryInput.trim() === "") return;
-    setEvents(
-      events.map((event) =>
-        event.id === selectedEventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: event.competition.categories.map((cat) =>
-                  cat.id === selectedCategoryId
-                    ? {
-                        ...cat,
-                        subCategories: [
-                          ...cat.subCategories,
-                          {
-                            id: Date.now(),
-                            name: subCategoryInput,
-                            choices: [],
-                          },
-                        ],
-                      }
-                    : cat,
-                ),
-              },
-            }
-          : event,
-      ),
-    );
-    setSubCategoryInput("");
-    subCategoryModalRef.current.close();
-  };
-
-  const openCompetitionModal = (eventId) => {
-    setSelectedEventId(eventId);
-    competitionModalRef.current.showModal();
-  };
-
-  const openCategoryModal = (eventId) => {
-    setSelectedEventId(eventId);
-    categoryModalRef.current.showModal();
-  };
-
-  const openChoiceModal = (eventId, categoryId) => {
-    setSelectedEventId(eventId);
-    setSelectedCategoryId(categoryId);
-    choiceModalRef.current.showModal();
-  };
-
-  const openSubCategoryModal = (eventId, categoryId) => {
-    setSelectedEventId(eventId);
-    setSelectedCategoryId(categoryId);
-    subCategoryModalRef.current.showModal();
-  };
+  const currentLabel = modalLabels[modalConfig.type] ?? {};
 
   return (
     <div>
-      <AddEventModal
-        modalRef={eventModalRef}
-        inputValue={eventInput}
-        setInputValue={setEventInput}
-        handleConfirm={handleAddEvent}
-      />
-      <AddCompetitionModal
-        modalRef={competitionModalRef}
-        inputValue={competitionInput}
-        setInputValue={setCompetitionInput}
-        handleConfirm={handleAddCompetition}
-      />
-      <AddCategoryModal
-        modalRef={categoryModalRef}
-        inputValue={categoryInput}
-        setInputValue={setCategoryInput}
-        handleConfirm={handleAddCategory}
-      />
-      <AddChoiceModal
-        modalRef={choiceModalRef}
-        inputValue={choiceInput}
-        setInputValue={setChoiceInput}
-        handleConfirm={handleAddChoice}
-      />
-      <AddSubCategoryModal
-        modalRef={subCategoryModalRef}
-        inputValue={subCategoryInput}
-        setInputValue={setSubCategoryInput}
-        handleConfirm={handleAddSubCategory}
-      />
+      {/* Single shared modal */}
+      <dialog ref={modalRef} className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <div className="flex flex-col">
+            <h3 className="font-bold text-lg">{currentLabel.title}</h3>
+            <p className="py-4">{currentLabel.label}</p>
+            <textarea
+              className="textarea"
+              placeholder={currentLabel.placeholder}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <div className="flex justify-end mt-2">
+              <button
+                className="btn btn-neutral bg-white text-black"
+                onClick={handleConfirm}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </dialog>
 
       <button
         className="btn btn-soft btn-primary"
-        onClick={() => eventModalRef.current.showModal()}
+        onClick={() => openModal("event")}
       >
         Add Event
       </button>
@@ -209,104 +202,19 @@ function Admin() {
       {events.length > 0 && (
         <Hierarchy
           events={events}
-          onAddCompetition={openCompetitionModal}
-          onAddCategory={openCategoryModal}
-          onAddChoice={openChoiceModal}
-          onAddSubCategory={openSubCategoryModal}
+          onAddCompetition={(eventId) => openModal("competition", eventId)}
+          onAddCategory={(eventId) => openModal("category", eventId)}
+          onAddChoice={(eventId, categoryId) =>
+            openModal("choice", eventId, categoryId)
+          }
+          onAddSubCategory={(eventId, categoryId) =>
+            openModal("subCategory", eventId, categoryId)
+          }
         />
       )}
     </div>
   );
 }
-
-// ─── Modals ──────────────────────────────────────────────────────────────────
-
-function Modal({
-  modalRef,
-  id,
-  title,
-  label,
-  placeholder,
-  inputValue,
-  setInputValue,
-  handleConfirm,
-}) {
-  return (
-    <dialog ref={modalRef} id={id} className="modal">
-      <div className="modal-box">
-        <form method="dialog">
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-            ✕
-          </button>
-        </form>
-        <div className="flex flex-col">
-          <h3 className="font-bold text-lg">{title}</h3>
-          <p className="py-4">{label}</p>
-          <textarea
-            className="textarea"
-            placeholder={placeholder}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <div className="flex justify-end mt-2">
-            <button
-              className="btn btn-neutral bg-white text-black"
-              onClick={handleConfirm}
-            >
-              Confirm
-            </button>
-          </div>
-        </div>
-      </div>
-    </dialog>
-  );
-}
-
-const AddEventModal = (props) => (
-  <Modal
-    {...props}
-    id="add_event_modal"
-    title="Add Event"
-    label="Event name:"
-    placeholder="Event name"
-  />
-);
-const AddCompetitionModal = (props) => (
-  <Modal
-    {...props}
-    id="add_competition_modal"
-    title="Add Competition"
-    label="Competition name:"
-    placeholder="Competition name"
-  />
-);
-const AddCategoryModal = (props) => (
-  <Modal
-    {...props}
-    id="add_category_modal"
-    title="Add Category"
-    label="Category name:"
-    placeholder="Category name"
-  />
-);
-const AddChoiceModal = (props) => (
-  <Modal
-    {...props}
-    id="add_choice_modal"
-    title="Add Choice"
-    label="Choice name:"
-    placeholder="Choice name"
-  />
-);
-const AddSubCategoryModal = (props) => (
-  <Modal
-    {...props}
-    id="add_subcategory_modal"
-    title="Add Sub-Category"
-    label="Sub-category name:"
-    placeholder="Sub-category name"
-  />
-);
 
 // ─── Tree ─────────────────────────────────────────────────────────────────────
 
