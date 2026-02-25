@@ -1,6 +1,7 @@
 import { pgTable, serial, integer, text, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
+// tables
 export const event = pgTable("event", {
   id: serial("id").primaryKey(),
   eventName: text("event_name").notNull(),
@@ -69,3 +70,16 @@ export const categoryRelation = relations(category, ({ one, many }) => ({
   children: many(category),
   choices: many(choice),
 }));
+
+// type inference
+export type Event = typeof event.$inferSelect;
+export type NewEvent = typeof event.$inferInsert;
+
+export type Competition = typeof competition.$inferSelect;
+export type NewCompetition = typeof competition.$inferInsert;
+
+export type Category = typeof category.$inferSelect;
+export type NewCategory = typeof category.$inferInsert;
+
+export type Choice = typeof choice.$inferSelect;
+export type NewChoice = typeof choice.$inferInsert;
