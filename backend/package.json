@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "node --watch src/index.ts",
-    "start": "node src/index.ts"
+    "start": "node src/index.ts",
+    "db:push": "drizzle-kit push"
   },
   "keywords": [],
   "author": "",
