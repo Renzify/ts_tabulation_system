@@ -35,14 +35,41 @@ export const category = pgTable("category", {
 
 export const choice = pgTable("choice", {
   id: serial("id").primaryKey(),
-  categoryID: integer("category_id")
+  categoryId: integer("category_id")
     .notNull()
     .references(() => category.id, { onDelete: "cascade" }),
   choiceName: text("choice_name").notNull(),
   choiceDesc: text("choice_desc").notNull(),
-  unlockCategoryId: integer("unlock_category_id")
+  noOfJudges: integer("no_of_judges").notNull(),
+  unlockCategoryId: integer("unlock_category_id").references(
+    () => category.id,
+    { onDelete: "set null" },
+  ),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const judge = pgTable("judge", {
+  id: serial("id").primaryKey(),
+  choiceId: integer("choice_id")
     .notNull()
-    .references(() => category.id, { onDelete: "set null" }),
+    .references(() => choice.id, { onDelete: "cascade" }),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  specialization: text("specialization").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const contestant = pgTable("contestant", {
+  id: serial("id").primaryKey(),
+  choiceId: integer("choice_id")
+    .notNull()
+    .references(() => choice.id, { onDelete: "cascade" }),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
 
 // relations
@@ -71,6 +98,11 @@ export const categoryRelation = relations(category, ({ one, many }) => ({
   choices: many(choice),
 }));
 
+export const choiceRelation = relations(choice, ({ many }) => ({
+  judges: many(judge),
+  contestants: many(contestant),
+}));
+
 // type inference
 export type Event = typeof event.$inferSelect;
 export type NewEvent = typeof event.$inferInsert;
@@ -83,3 +115,9 @@ export type NewCategory = typeof category.$inferInsert;
 
 export type Choice = typeof choice.$inferSelect;
 export type NewChoice = typeof choice.$inferInsert;
+
+export type Judge = typeof judge.$inferInsert;
+export type NewJudge = typeof judge.$inferSelect;
+
+export type Contestant = typeof contestant.$inferInsert;
+export type NewContestant = typeof contestant.$inferSelect;
