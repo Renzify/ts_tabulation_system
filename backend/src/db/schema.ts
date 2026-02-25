@@ -49,7 +49,11 @@ export const eventRelation = relations(event, ({ many }) => ({
   competitions: many(competition),
 }));
 
-export const competitionRelation = relations(competition, ({ many }) => ({
+export const competitionRelation = relations(competition, ({ one, many }) => ({
+  event: one(event, {
+    fields: [competition.eventId],
+    references: [event.id],
+  }),
   categories: many(category),
 }));
 
@@ -57,6 +61,10 @@ export const categoryRelation = relations(category, ({ one, many }) => ({
   parent: one(category, {
     fields: [category.parentCategoryId],
     references: [category.id],
+  }),
+  competition: one(competition, {
+    fields: [category.competitionId],
+    references: [competition.id],
   }),
   children: many(category),
   choices: many(choice),
