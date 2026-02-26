@@ -75,7 +75,6 @@ export async function updateJudge(req: Request, res: Response) {
     }
 
     const updatedJudge = await updateQuery.updateJudge(id, {
-      id,
       firstName: judgeFirstName,
       lastName: judgeLastName,
       specialization: judgeSpe,
