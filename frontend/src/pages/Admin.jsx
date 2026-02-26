@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useReducer } from "react";
 import { Hierarchy } from "./HierarchyTree";
 import ModalInput from "../components/Modals";
+import eventsReducer from "../reducers/eventsReducer";
 import {
   addChoiceRecursive,
   addSubCategoryRecursive,
@@ -11,7 +12,7 @@ import {
 function Admin() {
   const modalRef = useRef(null);
 
-  const [events, setEvents] = useState([]);
+  const [events, dispatch] = useReducer(eventsReducer, []);
   const [input, setInput] = useState("");
   const [modalConfig, setModalConfig] = useState({
     type: null,
@@ -32,91 +33,41 @@ function Admin() {
 
     switch (type) {
       case "event":
-        setEvents([
-          ...events,
-          { id: Date.now(), name: input, competition: null },
-        ]);
+        dispatch({ type: "ADD_EVENT", payload: input });
         break;
 
       case "competition":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? {
-                  ...event,
-                  competition: { id: Date.now(), name: input, categories: [] },
-                }
-              : event,
-          ),
-        );
+        dispatch({
+          type: "ADD_COMPETITION",
+          eventId,
+          payload: input,
+        });
         break;
 
       case "category":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? {
-                  ...event,
-                  competition: {
-                    ...event.competition,
-                    categories: [
-                      ...event.competition.categories,
-                      {
-                        id: Date.now(),
-                        name: input,
-                        choices: [],
-                        subCategories: [],
-                      },
-                    ],
-                  },
-                }
-              : event,
-          ),
-        );
+        dispatch({
+          type: "ADD_CATEGORY",
+          eventId,
+          payload: input,
+        });
         break;
 
       case "choice":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? {
-                  ...event,
-                  competition: {
-                    ...event.competition,
-                    categories: addChoiceRecursive(
-                      event.competition.categories,
-                      categoryId,
-                      input,
-                    ),
-                  },
-                }
-              : event,
-          ),
-        );
+        dispatch({
+          type: "ADD_CHOICE",
+          eventId,
+          categoryId,
+          payload: input,
+        });
         break;
 
       case "subCategory":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? {
-                  ...event,
-                  competition: {
-                    ...event.competition,
-                    categories: addSubCategoryRecursive(
-                      event.competition.categories,
-                      categoryId,
-                      input,
-                    ),
-                  },
-                }
-              : event,
-          ),
-        );
-        break;
-
-      default:
-        console.warn("Unknown type:", type);
+        dispatch({
+          type: "ADD_SUBCATEGORY",
+          eventId,
+          categoryId,
+          payload: input,
+        });
         break;
     }
 
@@ -204,20 +155,19 @@ function Admin() {
 
   return (
     <div>
-      {/* Single shared modal */}
+      {/* Modal */}
       <ModalInput
         ref={modalRef}
         type={modalConfig.type}
         onConfirm={(input) => handleConfirm(input)}
       />
-
       <button
         className="btn btn-soft btn-primary"
         onClick={() => openModal("event")}
       >
         Add Event
       </button>
-
+      {/*  Hierarchy */}
       {events.length > 0 && (
         <Hierarchy
           events={events}
@@ -235,7 +185,5 @@ function Admin() {
     </div>
   );
 }
-
-// ─── Tree ─────────────────────────────────────────────────────────────────────
 
 export default Admin;
