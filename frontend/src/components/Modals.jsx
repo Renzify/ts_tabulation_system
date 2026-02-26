@@ -28,14 +28,12 @@ const modalLabels = {
   },
 };
 
-// ForwardRef so parent can open/close the dialog
 const ModalInput = forwardRef(({ type, onConfirm }, ref) => {
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   const currentLabel = modalLabels[type] ?? {};
 
-  // Expose methods to parent
   useImperativeHandle(ref, () => ({
     open: () => {
       setInput("");
