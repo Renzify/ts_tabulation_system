@@ -457,10 +457,10 @@ function CategoryNode({
               <Plus size={12} /> Add Choice
             </button>
             <button
-              className="flex items-center gap-1 text-xs font-semibold text-pink-500 hover:text-white hover:bg-pink-500 border border-pink-300 hover:border-pink-500 px-3 py-1.5 rounded-lg transition-all"
+              className="flex items-center gap-1 text-xs font-semibold text-purple-500 hover:text-white hover:bg-purple-500 border border-purple-300 hover:border-purple-500 px-3 py-1.5 rounded-lg transition-all"
               onClick={() => onAddSubCategory(eventId, category.id)}
             >
-              <Plus size={12} /> Add Sub-Category
+              <Plus size={12} /> Add Category
             </button>
           </div>
         </div>
