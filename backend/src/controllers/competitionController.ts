@@ -37,8 +37,7 @@ export async function getCompetitionById(req: Request, res: Response) {
 // create competition
 export async function createCompetition(req: Request, res: Response) {
   try {
-    const id = "mekusID";
-    const { inputCompetitionName, inputCompetitionDesc } = req.body;
+    const { id, inputCompetitionName, inputCompetitionDesc } = req.body;
 
     const createdCompetition = await createQuery.createCompetition({
       eventId: id,

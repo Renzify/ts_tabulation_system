@@ -37,8 +37,7 @@ export async function getCategoryById(req: Request, res: Response) {
 // create category
 export async function createCategory(req: Request, res: Response) {
   try {
-    const id = "idMekus";
-    const { inputCategoryName, inputCategoryDesc } = req.body;
+    const { id, inputCategoryName, inputCategoryDesc } = req.body;
 
     const createdCategory = await createQuery.createCategory({
       competitionId: id,
@@ -56,7 +55,7 @@ export async function createCategory(req: Request, res: Response) {
 // update category
 export async function updateCategory(req: Request, res: Response) {
   try {
-    const id = "idMekus";
+    const id = req.params.id as string;
     const { inputCategoryName, inputCategoryDesc } = req.body;
 
     const existingCategory = await idReadQuery.getCategoryById(id);

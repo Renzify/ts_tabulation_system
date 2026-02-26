@@ -37,11 +37,10 @@ export async function getChoiceById(req: Request, res: Response) {
 // create Choice
 export async function createChoice(req: Request, res: Response) {
   try {
-    const idDummy = "dummy";
-    const { choiceName, choiceDesc, noOfJudges } = req.body;
+    const { id, choiceName, choiceDesc, noOfJudges } = req.body;
 
     const createdChoice = await createQuery.createChoice({
-      categoryId: idDummy,
+      categoryId: id,
       choiceName,
       choiceDesc,
       noOfJudges,

@@ -37,8 +37,7 @@ export async function getContestantById(req: Request, res: Response) {
 // create Contestant
 export async function createContestant(req: Request, res: Response) {
   try {
-    const id = "idMekus";
-    const { inputFirstName, inputLastName } = req.body;
+    const { id, inputFirstName, inputLastName } = req.body;
 
     const createdContestant = await createQuery.createContestant({
       choiceId: id,

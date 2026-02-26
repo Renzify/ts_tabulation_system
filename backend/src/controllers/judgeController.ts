@@ -37,10 +37,8 @@ export async function getJudgeById(req: Request, res: Response) {
 // create Judge
 export async function createJudge(req: Request, res: Response) {
   try {
-    // to do
-    const idDummy = "dummy";
-
-    const { judgeFirstName, judgeLastName, judgeSpe } = req.body;
+    // to do id
+    const { id, judgeFirstName, judgeLastName, judgeSpe } = req.body;
 
     if (!judgeFirstName || !judgeLastName || !judgeSpe) {
       return res.status(400).json({
@@ -48,7 +46,7 @@ export async function createJudge(req: Request, res: Response) {
       });
     }
     const createdJudge = await createQuery.createJudge({
-      choiceId: idDummy,
+      choiceId: id,
       firstName: judgeFirstName,
       lastName: judgeLastName,
       specialization: judgeSpe,
