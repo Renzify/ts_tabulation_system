@@ -6,7 +6,6 @@ import {
   getCompetitionById,
   updateCompetition,
 } from "../controllers/competitionController.ts";
-import { createCompetition } from "../db/queries.ts";
 
 const router = Router();
 
