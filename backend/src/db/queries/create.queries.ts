@@ -1,5 +1,4 @@
-import { db } from "./index.ts";
-import { eq } from "drizzle-orm";
+import { db } from "../index.ts";
 import {
   event,
   competition,
@@ -13,10 +12,12 @@ import {
   type NewChoice,
   type NewJudge,
   type NewContestant,
-} from "./schema.ts";
+} from "../schema.ts";
 
+// Create Queries
 export const createEvent = async (data: NewEvent) => {
   const [createdEvent] = await db.insert(event).values(data).returning();
+
   return createdEvent;
 };
 
@@ -37,11 +38,13 @@ export const createCategory = async (data: NewCategory) => {
 
 export const createChoice = async (data: NewChoice) => {
   const [createdChoice] = await db.insert(choice).values(data).returning();
+
   return createdChoice;
 };
 
 export const createJudge = async (data: NewJudge) => {
   const [createdJudge] = await db.insert(judge).values(data).returning();
+
   return createdJudge;
 };
 

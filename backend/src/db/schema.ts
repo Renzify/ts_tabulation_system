@@ -119,8 +119,8 @@ export type NewCategory = typeof category.$inferInsert;
 export type Choice = typeof choice.$inferSelect;
 export type NewChoice = typeof choice.$inferInsert;
 
-export type Judge = typeof judge.$inferInsert;
-export type NewJudge = typeof judge.$inferSelect;
+export type Judge = typeof judge.$inferSelect;
+export type NewJudge = typeof judge.$inferInsert;
 
-export type Contestant = typeof contestant.$inferInsert;
-export type NewContestant = typeof contestant.$inferSelect;
+export type Contestant = typeof contestant.$inferSelect;
+export type NewContestant = typeof contestant.$inferInsert;
