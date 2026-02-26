@@ -41,10 +41,6 @@ export const choice = pgTable("choice", {
   choiceName: text("choice_name").notNull(),
   choiceDesc: text("choice_desc").notNull(),
   noOfJudges: integer("no_of_judges").notNull(),
-  unlockCategoryId: integer("unlock_category_id").references(
-    () => category.id,
-    { onDelete: "set null" },
-  ),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
@@ -92,12 +88,15 @@ export const categoryRelation = relations(category, ({ one, many }) => ({
   parent: one(category, {
     fields: [category.parentCategoryId],
     references: [category.id],
+    relationName: "parent",
+  }),
+  children: many(category, {
+    relationName: "parent",
   }),
   competition: one(competition, {
     fields: [category.competitionId],
     references: [competition.id],
   }),
-  children: many(category),
   choices: many(choice),
 }));
 
