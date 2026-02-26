@@ -8,7 +8,7 @@ import * as idReadQuery from "../db/queries/id-select.queries.ts";
 // select competition
 export async function getCompetition(req: Request, res: Response) {
   try {
-    const competitions = await readQuery.get();
+    const competitions = await readQuery.getAllCompetitions();
     res.status(200).json(competitions);
   } catch (error) {
     console.error("getCompetition controller error:", error);

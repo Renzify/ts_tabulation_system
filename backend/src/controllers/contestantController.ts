@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import * as queries from "../db/queries.ts";
+import * as createQuery from "../db/queries/create.queries.ts";
+import * as readQuery from "../db/queries/select.queries.ts";
+import * as updateQuery from "../db/queries/update.queries.ts";
+import * as deleteQuery from "../db/queries/delete.queries.ts";
+import * as idReadQuery from "../db/queries/id-select.queries.ts";
 
 // select Contestant
 export async function getContestant(req: Request, res: Response) {
   try {
-    const Contestants = await queries.getContestant();
+    const Contestants = await readQuery.getAllContestants();
     res.status(200).json(Contestants);
   } catch (error) {
     console.error("selectContestant controller error:", error);
@@ -15,8 +19,8 @@ export async function getContestant(req: Request, res: Response) {
 // select Contestant by id
 export async function getContestantById(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const Contestant = await queries.getContestantById(id);
+    const id = req.params.id as string;
+    const Contestant = await idReadQuery.getContestantById(id);
 
     if (!Contestant) {
       res.status(404).json({ message: "Contestant not found" });
@@ -33,11 +37,13 @@ export async function getContestantById(req: Request, res: Response) {
 // create Contestant
 export async function createContestant(req: Request, res: Response) {
   try {
-    const { contestantName, contestantDesc } = req.body;
+    const id = "idMekus";
+    const { inputFirstName, inputLastName } = req.body;
 
-    const createdContestant = await queries.createContestant({
-      contestantName,
-      contestantDesc,
+    const createdContestant = await createQuery.createContestant({
+      choiceId: id,
+      firstName: inputFirstName,
+      lastName: inputLastName,
     });
 
     res.status(201).json(createdContestant);
@@ -50,26 +56,19 @@ export async function createContestant(req: Request, res: Response) {
 // update Contestant
 export async function updateContestant(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const { contestantName, contestantDesc } = req.body;
+    const id = req.params.id as string;
+    const { inputFirstName, inputLastName } = req.body;
 
-    const existingContestant = await queries.getContestantById(id);
+    const existingContestant = await idReadQuery.getContestantById(id);
 
     if (!existingContestant) {
       res.status(404).json({ message: "Contestant not found" });
       return;
     }
 
-    if (existingContestant.id !== id) {
-      res
-        .status(404)
-        .json({ message: "You can only update your own Contestant" });
-      return;
-    }
-
-    const updatedContestant = await queries.updateContestant(id, {
-      contestantName,
-      contestantDesc,
+    const updatedContestant = await updateQuery.updateContestant(id, {
+      firstName: inputFirstName,
+      lastName: inputLastName,
     });
 
     res.status(200).json(updatedContestant);
@@ -82,19 +81,12 @@ export async function updateContestant(req: Request, res: Response) {
 // delete Contestant
 export async function deleteContestant(req: Request, res: Response) {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
-    const existingContestant = await queries.getContestantById(id);
+    const existingContestant = await idReadQuery.getContestantById(id);
 
     if (!existingContestant) {
       res.status(404).json({ message: "Contestant not found" });
-      return;
-    }
-
-    if (existingContestant.id !== id) {
-      res
-        .status(404)
-        .json({ message: "You can only update your own Contestant" });
       return;
     }
 
