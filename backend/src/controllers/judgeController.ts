@@ -3,7 +3,7 @@ import * as createQuery from "../db/queries/create.queries.ts";
 import * as readQuery from "../db/queries/select.queries.ts";
 import * as updateQuery from "../db/queries/update.queries.ts";
 import * as deleteQuery from "../db/queries/delete.queries.ts";
-import * as idSelectQuery from "../db/queries/id-select.queries.ts";
+import * as idReadQuery from "../db/queries/id-select.queries.ts";
 
 // select Judge
 export async function getJudge(req: Request, res: Response) {
@@ -20,7 +20,7 @@ export async function getJudge(req: Request, res: Response) {
 export async function getJudgeById(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const Judge = await idSelectQuery.getJudgeById(id);
+    const Judge = await idReadQuery.getJudgeById(id);
 
     if (!Judge) {
       res.status(404).json({ message: "Judge not found" });
@@ -67,7 +67,7 @@ export async function updateJudge(req: Request, res: Response) {
     const id = req.params.id as string;
     const { judgeFirstName, judgeLastName, judgeSpe } = req.body;
 
-    const existingJudge = await idSelectQuery.getJudgeById(id);
+    const existingJudge = await idReadQuery.getJudgeById(id);
 
     if (!existingJudge) {
       res.status(404).json({ message: "Judge not found" });
@@ -91,7 +91,7 @@ export async function updateJudge(req: Request, res: Response) {
 export async function deleteJudge(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const existingJudge = await idSelectQuery.getJudgeById(id);
+    const existingJudge = await idReadQuery.getJudgeById(id);
 
     if (!existingJudge) {
       res.status(404).json({ message: "Judge not found" });

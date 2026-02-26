@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import * as queries from "../db/queries";
+import * as createQuery from "../db/queries/create.queries.ts";
+import * as readQuery from "../db/queries/select.queries.ts";
+import * as updateQuery from "../db/queries/update.queries.ts";
+import * as deleteQuery from "../db/queries/delete.queries.ts";
+import * as idReadQuery from "../db/queries/id-select.queries.ts";
 
 // select category
 export async function getCategory(req: Request, res: Response) {
   try {
-    const categories = await queries.getCategory();
+    const categories = await readQuery.getAllCategories();
     res.status(200).json(categories);
   } catch (error) {
     console.error("selectCategory controller error:", error);
@@ -15,8 +19,8 @@ export async function getCategory(req: Request, res: Response) {
 // select category by id
 export async function getCategoryById(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const category = await queries.getCategoryById(id);
+    const id = req.params.id as string;
+    const category = await idReadQuery.getCategoryById(id);
 
     if (!category) {
       res.status(404).json({ message: "Category not found" });
@@ -33,11 +37,13 @@ export async function getCategoryById(req: Request, res: Response) {
 // create category
 export async function createCategory(req: Request, res: Response) {
   try {
-    const { categoryName, categoryDesc } = req.body;
+    const id = "idMekus";
+    const { inputCategoryName, inputCategoryDesc } = req.body;
 
-    const createdCategory = await queries.createCategory({
-      categoryName,
-      categoryDesc,
+    const createdCategory = await createQuery.createCategory({
+      competitionId: id,
+      categoryName: inputCategoryName,
+      categoryDesc: inputCategoryDesc,
     });
 
     res.status(201).json(createdCategory);
@@ -50,26 +56,19 @@ export async function createCategory(req: Request, res: Response) {
 // update category
 export async function updateCategory(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const { categoryName, categoryDesc } = req.body;
+    const id = "idMekus";
+    const { inputCategoryName, inputCategoryDesc } = req.body;
 
-    const existingCategory = await queries.getCategoryById(id);
+    const existingCategory = await idReadQuery.getCategoryById(id);
 
     if (!existingCategory) {
       res.status(404).json({ message: "Category not found" });
       return;
     }
 
-    if (existingCategory.id !== id) {
-      res
-        .status(404)
-        .json({ message: "You can only update your own category" });
-      return;
-    }
-
-    const updatedCategory = await queries.updateCategory(id, {
-      categoryName,
-      categoryDesc,
+    const updatedCategory = await updateQuery.updateCategory(id, {
+      categoryName: inputCategoryName,
+      categoryDesc: inputCategoryDesc,
     });
 
     res.status(200).json(updatedCategory);
@@ -82,19 +81,12 @@ export async function updateCategory(req: Request, res: Response) {
 // delete category
 export async function deleteCategory(req: Request, res: Response) {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
-    const existingCategory = await queries.getCategoryById(id);
+    const existingCategory = await idReadQuery.getCategoryById(id);
 
     if (!existingCategory) {
       res.status(404).json({ message: "Category not found" });
-      return;
-    }
-
-    if (existingCategory.id !== id) {
-      res
-        .status(404)
-        .json({ message: "You can only update your own category" });
       return;
     }
 
