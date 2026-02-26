@@ -78,78 +78,23 @@ function Admin() {
   const handleDelete = (type, eventId, categoryId = null, itemId = null) => {
     switch (type) {
       case "event":
-        setEvents(events.filter((event) => event.id !== eventId));
+        dispatch({ type: "DELETE_EVENT", eventId });
         break;
 
       case "competition":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId ? { ...event, competition: null } : event,
-          ),
-        );
+        dispatch({ type: "DELETE_COMPETITION", eventId });
         break;
 
       case "category":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? {
-                  ...event,
-                  competition: {
-                    ...event.competition,
-                    categories: deleteCategoryRecursive(
-                      event.competition.categories,
-                      categoryId,
-                    ),
-                  },
-                }
-              : event,
-          ),
-        );
+        dispatch({ type: "DELETE_CATEGORY", eventId, categoryId });
         break;
 
       case "choice":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? {
-                  ...event,
-                  competition: {
-                    ...event.competition,
-                    categories: deleteChoiceRecursive(
-                      event.competition.categories,
-                      itemId,
-                    ),
-                  },
-                }
-              : event,
-          ),
-        );
+        dispatch({ type: "DELETE_CHOICE", eventId, itemId });
         break;
 
       case "subCategory":
-        setEvents(
-          events.map((event) =>
-            event.id === eventId
-              ? {
-                  ...event,
-                  competition: {
-                    ...event.competition,
-                    categories: event.competition.categories.map((cat) =>
-                      cat.id === categoryId
-                        ? {
-                            ...cat,
-                            subCategories: cat.subCategories.filter(
-                              (sub) => sub.id !== itemId,
-                            ),
-                          }
-                        : cat,
-                    ),
-                  },
-                }
-              : event,
-          ),
-        );
+        dispatch({ type: "DELETE_SUBCATEGORY", eventId, itemId });
     }
   };
 
