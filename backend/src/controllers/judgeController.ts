@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import * as queries from "../db/queries.ts";
+import * as createQuery from "../db/queries/create.queries.ts";
+import * as readQuery from "../db/queries/select.queries.ts";
+import * as updateQuery from "../db/queries/update.queries.ts";
+import * as deleteQuery from "../db/queries/delete.queries.ts";
+import * as idSelectQuery from "../db/queries/id-select.queries.ts";
 
 // select Judge
 export async function getJudge(req: Request, res: Response) {
   try {
-    const Judges = await queries.getJudge();
+    const Judges = await readQuery.getAllJudges();
     res.status(200).json(Judges);
   } catch (error) {
     console.error("selectJudge controller error:", error);
@@ -15,8 +19,8 @@ export async function getJudge(req: Request, res: Response) {
 // select Judge by id
 export async function getJudgeById(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const Judge = await queries.getJudgeById(id);
+    const id = req.params.id as string;
+    const Judge = await idSelectQuery.getJudgeById(id);
 
     if (!Judge) {
       res.status(404).json({ message: "Judge not found" });
@@ -33,11 +37,21 @@ export async function getJudgeById(req: Request, res: Response) {
 // create Judge
 export async function createJudge(req: Request, res: Response) {
   try {
-    const { judgeName, judgeDesc } = req.body;
+    // to do
+    const idMekus = "mekusmekus";
 
-    const createdJudge = await queries.createJudge({
-      judgeName,
-      judgeDesc,
+    const { judgeFirstName, judgeLastName, judgeSpe } = req.body;
+
+    if (!judgeFirstName || !judgeLastName || !judgeSpe) {
+      return res.status(400).json({
+        error: "First name, Last name, and specialization are required",
+      });
+    }
+    const createdJudge = await createQuery.createJudge({
+      choiceId: idMekus,
+      firstName: judgeFirstName,
+      lastName: judgeLastName,
+      specialization: judgeSpe,
     });
 
     res.status(201).json(createdJudge);
@@ -50,24 +64,21 @@ export async function createJudge(req: Request, res: Response) {
 // update Judge
 export async function updateJudge(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const { judgeName, judgeDesc } = req.body;
+    const id = req.params.id as string;
+    const { judgeFirstName, judgeLastName, judgeSpe } = req.body;
 
-    const existingJudge = await queries.getJudgeById(id);
+    const existingJudge = await idSelectQuery.getJudgeById(id);
 
     if (!existingJudge) {
       res.status(404).json({ message: "Judge not found" });
       return;
     }
 
-    if (existingJudge.id !== id) {
-      res.status(404).json({ message: "You can only update your own Judge" });
-      return;
-    }
-
-    const updatedJudge = await queries.updateJudge(id, {
-      judgeName,
-      judgeDesc,
+    const updatedJudge = await updateQuery.updateJudge(id, {
+      id,
+      firstName: judgeFirstName,
+      lastName: judgeLastName,
+      specialization: judgeSpe,
     });
 
     res.status(200).json(updatedJudge);
@@ -80,20 +91,15 @@ export async function updateJudge(req: Request, res: Response) {
 // delete Judge
 export async function deleteJudge(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-
-    const existingJudge = await queries.getJudgeById(id);
+    const id = req.params.id as string;
+    const existingJudge = await idSelectQuery.getJudgeById(id);
 
     if (!existingJudge) {
       res.status(404).json({ message: "Judge not found" });
       return;
     }
 
-    if (existingJudge.id !== id) {
-      res.status(404).json({ message: "You can only update your own Judge" });
-      return;
-    }
-
+    await deleteQuery.deleteJudge(id);
     res.status(200).json({ message: "Successfully deleted Judge" });
   } catch (error) {
     console.error("deleteJudge controller error:", error);

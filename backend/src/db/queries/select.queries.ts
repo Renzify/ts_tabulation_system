@@ -14,6 +14,26 @@ export const getAllEvents = async () => {
   return await db.select().from(event);
 };
 
+export const getAllCompetitions = async () => {
+  return await db.select().from(competition);
+};
+
+export const getAllCategories = async () => {
+  return await db.select().from(category);
+};
+
+export const getAllChoices = async () => {
+  return await db.select().from(choice);
+};
+
+export const getAllJudges = async () => {
+  return await db.select().from(judge);
+};
+
+export const getAllContestants = async () => {
+  return await db.select().from(contestant);
+};
+
 // Get all competitions for a specific event
 export const getCompetitionsByEventId = async (eventId: string) => {
   return await db
