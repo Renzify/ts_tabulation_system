@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import * as queries from "../db/queries/create.queries";
+import * as selectQuery from "../db/queries/select.queries.ts"
+import * as upsertQuery from "../db/queries/upsert.queries.ts"
+import * as deleteQuery from "../db/queries/delete.queries.ts"
+import * as idSelectQuery from "../db/queries/id-select.queries.ts"
 
 // select all event
 export async function getAllEvent(req: Request, res: Response) {
