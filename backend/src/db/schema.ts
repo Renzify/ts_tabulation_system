@@ -1,9 +1,16 @@
-import { pgTable, serial, integer, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  serial,
+  integer,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // tables
 export const event = pgTable("event", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   eventName: text("event_name").notNull(),
   eventDesc: text("event_desc").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
@@ -11,8 +18,8 @@ export const event = pgTable("event", {
 });
 
 export const competition = pgTable("competition", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id")
+  id: uuid("id").defaultRandom().primaryKey(),
+  eventId: uuid("event_id")
     .notNull()
     .references(() => event.id, { onDelete: "cascade" }),
   competitionName: text("competition_name").notNull(),
@@ -22,32 +29,32 @@ export const competition = pgTable("competition", {
 });
 
 export const category = pgTable("category", {
-  id: serial("id").primaryKey(),
-  competitionId: integer("competition_id")
+  id: uuid("id").defaultRandom().primaryKey(),
+  competitionId: uuid("competition_id")
     .notNull()
     .references(() => competition.id, { onDelete: "cascade" }),
   categoryName: text("category_name").notNull(),
   categoryDesc: text("category_desc").notNull(),
-  parentCategoryId: integer("parent_category_id"),
+  parentCategoryId: uuid("parent_category_id"),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
 
 export const choice = pgTable("choice", {
-  id: serial("id").primaryKey(),
-  categoryId: integer("category_id")
+  id: uuid("id").defaultRandom().primaryKey(),
+  categoryId: uuid("category_id")
     .notNull()
     .references(() => category.id, { onDelete: "cascade" }),
   choiceName: text("choice_name").notNull(),
   choiceDesc: text("choice_desc").notNull(),
-  noOfJudges: integer("no_of_judges").notNull(),
+  noOfJudges: uuid("no_of_judges").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
 
 export const judge = pgTable("judge", {
-  id: serial("id").primaryKey(),
-  choiceId: integer("choice_id")
+  id: uuid("id").defaultRandom().primaryKey(),
+  choiceId: uuid("choice_id")
     .notNull()
     .references(() => choice.id, { onDelete: "cascade" }),
   firstName: text("first_name").notNull(),
@@ -58,8 +65,8 @@ export const judge = pgTable("judge", {
 });
 
 export const contestant = pgTable("contestant", {
-  id: serial("id").primaryKey(),
-  choiceId: integer("choice_id")
+  id: uuid("id").defaultRandom().primaryKey(),
+  choiceId: uuid("choice_id")
     .notNull()
     .references(() => choice.id, { onDelete: "cascade" }),
   firstName: text("first_name").notNull(),

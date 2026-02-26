@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as queries from "../db/queries";
+import * as queries from "../db/queries/create.queries";
 
 // select all event
 export async function getAllEvent(req: Request, res: Response) {

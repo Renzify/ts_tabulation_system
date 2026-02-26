@@ -16,7 +16,7 @@ import {
 } from "../schema.ts";
 
 // Update Queries
-export const updateEvent = async (eventId: number, data: Partial<NewEvent>) => {
+export const updateEvent = async (eventId: string, data: Partial<NewEvent>) => {
   const [updatedEvent] = await db
     .update(event)
     .set(data)
@@ -27,7 +27,7 @@ export const updateEvent = async (eventId: number, data: Partial<NewEvent>) => {
 };
 
 export const updateCompetition = async (
-  competition_id: number,
+  competition_id: string,
   data: Partial<NewCompetition>,
 ) => {
   const [updatedCompetition] = await db
@@ -40,7 +40,7 @@ export const updateCompetition = async (
 };
 
 export const updateCategory = async (
-  category_id: number,
+  category_id: string,
   data: Partial<NewCategory>,
 ) => {
   const [updatedCategory] = await db
@@ -53,7 +53,7 @@ export const updateCategory = async (
 };
 
 export const updateChoice = async (
-  choice_id: number,
+  choice_id: string,
   data: Partial<NewChoice>,
 ) => {
   const [updatedChoice] = await db
@@ -66,7 +66,7 @@ export const updateChoice = async (
 };
 
 export const updateJudge = async (
-  judge_id: number,
+  judge_id: string,
   data: Partial<NewJudge>,
 ) => {
   const [updatedJudge] = await db
@@ -79,7 +79,7 @@ export const updateJudge = async (
 };
 
 export const updateContestant = async (
-  contestant_id: number,
+  contestant_id: string,
   data: Partial<NewContestant>,
 ) => {
   const [updatedContestant] = await db

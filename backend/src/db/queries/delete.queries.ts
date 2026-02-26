@@ -9,7 +9,7 @@ import {
   contestant,
 } from "../schema.ts";
 
-export const deleteEvent = async (eventId: number) => {
+export const deleteEvent = async (eventId: string) => {
   const [deletedEvent] = await db
     .delete(event)
     .where(eq(event.id, eventId))
@@ -18,7 +18,7 @@ export const deleteEvent = async (eventId: number) => {
   return deletedEvent;
 };
 
-export const competitionEvent = async (competitionId: number) => {
+export const competitionEvent = async (competitionId: string) => {
   const [deletedCompetition] = await db
     .delete(competition)
     .where(eq(competition.id, competitionId))
@@ -27,7 +27,7 @@ export const competitionEvent = async (competitionId: number) => {
   return deletedCompetition;
 };
 
-export const deleteCategory = async (categoryId: number) => {
+export const deleteCategory = async (categoryId: string) => {
   const [deletedCategory] = await db
     .delete(category)
     .where(eq(category.id, categoryId))
@@ -36,7 +36,7 @@ export const deleteCategory = async (categoryId: number) => {
   return deletedCategory;
 };
 
-export const deleteChoice = async (choiceId: number) => {
+export const deleteChoice = async (choiceId: string) => {
   const [deletedChoice] = await db
     .delete(choice)
     .where(eq(choice.id, choiceId))
@@ -45,7 +45,7 @@ export const deleteChoice = async (choiceId: number) => {
   return deletedChoice;
 };
 
-export const deleteJudge = async (judgeId: number) => {
+export const deleteJudge = async (judgeId: string) => {
   const [deletedJudge] = await db
     .delete(judge)
     .where(eq(judge.id, judgeId))
@@ -54,7 +54,7 @@ export const deleteJudge = async (judgeId: number) => {
   return deletedJudge;
 };
 
-export const deleteContestant = async (contestantId: number) => {
+export const deleteContestant = async (contestantId: string) => {
   const [deletedContestant] = await db
     .delete(contestant)
     .where(eq(contestant.id, contestantId))
