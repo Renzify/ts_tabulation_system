@@ -18,7 +18,7 @@ export const deleteEvent = async (eventId: string) => {
   return deletedEvent;
 };
 
-export const competitionEvent = async (competitionId: string) => {
+export const deleteCompetition = async (competitionId: string) => {
   const [deletedCompetition] = await db
     .delete(competition)
     .where(eq(competition.id, competitionId))
