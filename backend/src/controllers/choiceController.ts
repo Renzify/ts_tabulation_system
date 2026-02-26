@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
-import * as queries from "../db/queries.ts";
+import * as createQuery from "../db/queries/create.queries.ts";
+import * as readQuery from "../db/queries/select.queries.ts";
+import * as updateQuery from "../db/queries/update.queries.ts";
+import * as deleteQuery from "../db/queries/delete.queries.ts";
+import * as idReadQuery from "../db/queries/id-select.queries.ts";
 
 // select Choice
 export async function getChoice(req: Request, res: Response) {
   try {
-    const choices = await queries.getChoice();
+    const choices = await readQuery.getAllChoices();
     res.status(200).json(choices);
   } catch (error) {
     console.error("selectChoice controller error:", error);
@@ -15,8 +19,8 @@ export async function getChoice(req: Request, res: Response) {
 // select Choice by id
 export async function getChoiceById(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const Choice = await queries.getChoiceById(id);
+    const id = req.params.id as string;
+    const Choice = await idReadQuery.getChoiceById(id);
 
     if (!Choice) {
       res.status(404).json({ message: "Choice not found" });
@@ -33,11 +37,14 @@ export async function getChoiceById(req: Request, res: Response) {
 // create Choice
 export async function createChoice(req: Request, res: Response) {
   try {
-    const { choiceName, choiceDesc } = req.body;
+    const idDummy = "dummy";
+    const { choiceName, choiceDesc, noOfJudges } = req.body;
 
-    const createdChoice = await queries.createChoice({
+    const createdChoice = await createQuery.createChoice({
+      categoryId: idDummy,
       choiceName,
       choiceDesc,
+      noOfJudges,
     });
 
     res.status(201).json(createdChoice);
@@ -50,24 +57,20 @@ export async function createChoice(req: Request, res: Response) {
 // update Choice
 export async function updateChoice(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const { choiceName, choiceDesc } = req.body;
+    const id = req.params.id as string;
+    const { choiceName, choiceDesc, noOfJudges } = req.body;
 
-    const existingChoice = await queries.getChoiceById(id);
+    const existingChoice = await idReadQuery.getChoiceById(id);
 
     if (!existingChoice) {
       res.status(404).json({ message: "Choice not found" });
       return;
     }
 
-    if (existingChoice.id !== id) {
-      res.status(404).json({ message: "You can only update your own Choice" });
-      return;
-    }
-
-    const updatedChoice = await queries.updateChoice(id, {
+    const updatedChoice = await updateQuery.updateChoice(id, {
       choiceName,
       choiceDesc,
+      noOfJudges,
     });
 
     res.status(200).json(updatedChoice);
@@ -80,19 +83,16 @@ export async function updateChoice(req: Request, res: Response) {
 // delete Choice
 export async function deleteChoice(req: Request, res: Response) {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
-    const existingChoice = await queries.getChoiceById(id);
+    const existingChoice = await idReadQuery.getChoiceById(id);
 
     if (!existingChoice) {
       res.status(404).json({ message: "Choice not found" });
       return;
     }
 
-    if (existingChoice.id !== id) {
-      res.status(404).json({ message: "You can only update your own Choice" });
-      return;
-    }
+    await deleteQuery.deleteChoice(id);
 
     res.status(200).json({ message: "Successfully deleted Choice" });
   } catch (error) {
