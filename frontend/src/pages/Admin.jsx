@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronRight,
   Plus,
+  Trash2,
 } from "lucide-react";
 
 function Admin() {
@@ -130,6 +131,87 @@ function Admin() {
     modalRef.current.close();
   };
 
+  const handleDelete = (type, eventId, categoryId = null, itemId = null) => {
+    if (type === "event") {
+      setEvents(events.filter((event) => event.id !== eventId));
+    }
+
+    if (type === "competition") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId ? { ...event, competition: null } : event,
+        ),
+      );
+    }
+
+    if (type === "category") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                competition: {
+                  ...event.competition,
+                  categories: event.competition.categories.filter(
+                    (cat) => cat.id !== categoryId,
+                  ),
+                },
+              }
+            : event,
+        ),
+      );
+    }
+
+    if (type === "choice") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                competition: {
+                  ...event.competition,
+                  categories: event.competition.categories.map((cat) =>
+                    cat.id === categoryId
+                      ? {
+                          ...cat,
+                          choices: cat.choices.filter(
+                            (choice) => choice.id !== itemId,
+                          ),
+                        }
+                      : cat,
+                  ),
+                },
+              }
+            : event,
+        ),
+      );
+    }
+
+    if (type === "subCategory") {
+      setEvents(
+        events.map((event) =>
+          event.id === eventId
+            ? {
+                ...event,
+                competition: {
+                  ...event.competition,
+                  categories: event.competition.categories.map((cat) =>
+                    cat.id === categoryId
+                      ? {
+                          ...cat,
+                          subCategories: cat.subCategories.filter(
+                            (sub) => sub.id !== itemId,
+                          ),
+                        }
+                      : cat,
+                  ),
+                },
+              }
+            : event,
+        ),
+      );
+    }
+  };
   // Map type to human-readable labels
   const modalLabels = {
     event: {
@@ -210,6 +292,7 @@ function Admin() {
           onAddSubCategory={(eventId, categoryId) =>
             openModal("subCategory", eventId, categoryId)
           }
+          onDelete={handleDelete}
         />
       )}
     </div>
@@ -218,7 +301,13 @@ function Admin() {
 
 // ─── Tree ─────────────────────────────────────────────────────────────────────
 
-function CategoryNode({ category, eventId, onAddChoice, onAddSubCategory }) {
+function CategoryNode({
+  category,
+  eventId,
+  onAddChoice,
+  onAddSubCategory,
+  onDelete,
+}) {
   const [expanded, setExpanded] = useState(true);
   const hasChoices = category.choices?.length > 0;
   const hasSubCategories = category.subCategories?.length > 0;
@@ -239,12 +328,23 @@ function CategoryNode({ category, eventId, onAddChoice, onAddSubCategory }) {
           <div className="w-4" />
         )}
         <Tag size={16} className="text-purple-500" />
-        <div className="flex-1">
-          <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
-            CATEGORY
+        <div className="flex-1 flex justify-between">
+          <div>
+            <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
+              CATEGORY
+            </div>
+            <div className="font-semibold text-slate-800 text-sm">
+              {category.name}
+            </div>
           </div>
-          <div className="font-semibold text-slate-800 text-sm">
-            {category.name}
+
+          <div className="mt-2 mr-4">
+            <button
+              onClick={() => onDelete("category", eventId, category.id)}
+              className="text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={20} />
+            </button>
           </div>
         </div>
       </div>
@@ -260,12 +360,24 @@ function CategoryNode({ category, eventId, onAddChoice, onAddSubCategory }) {
             >
               <div className="w-4" />
               <div className="w-2 h-2 rounded-full border-2 border-slate-300 flex-shrink-0" />
-              <div className="flex-1">
-                <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
-                  CHOICE
+              <div className="flex-1 flex justify-between">
+                <div>
+                  <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
+                    CHOICE
+                  </div>
+                  <div className="font-semibold text-slate-800 text-sm">
+                    {choice.name}
+                  </div>
                 </div>
-                <div className="font-semibold text-slate-800 text-sm">
-                  {choice.name}
+                <div className="mt-2 mr-4">
+                  <button
+                    onClick={() =>
+                      onDelete("choice", eventId, category.id, choice.id)
+                    }
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={20} />
+                  </button>
                 </div>
               </div>
             </div>
@@ -279,12 +391,25 @@ function CategoryNode({ category, eventId, onAddChoice, onAddSubCategory }) {
             >
               <div className="w-4" />
               <Tag size={16} className="text-pink-500" />
-              <div className="flex-1">
-                <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
-                  SUB-CATEGORY
+              <div className="flex-1 flex flex justify-between">
+                <div>
+                  <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
+                    SUB-CATEGORY
+                  </div>
+                  <div className="font-semibold text-slate-800 text-sm">
+                    {sub.name}
+                  </div>
                 </div>
-                <div className="font-semibold text-slate-800 text-sm">
-                  {sub.name}
+
+                <div className="mt-2 mr-4">
+                  <button
+                    onClick={() =>
+                      onDelete("subCategory", eventId, category.id, sub.id)
+                    }
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={20} />
+                  </button>
                 </div>
               </div>
             </div>
@@ -317,6 +442,7 @@ function Hierarchy({
   onAddCategory,
   onAddChoice,
   onAddSubCategory,
+  onDelete,
 }) {
   return (
     <div className="flex justify-center items-center mt-7">
@@ -335,12 +461,22 @@ function Hierarchy({
               <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all">
                 <div className="w-4" />
                 <Trophy size={16} className="text-amber-500" />
-                <div className="flex-1">
-                  <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
-                    EVENT TYPE
+                <div className="flex-1 flex justify-between">
+                  <div>
+                    <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
+                      EVENT TYPE
+                    </div>
+                    <div className="font-semibold text-slate-800 text-sm">
+                      {event.name}
+                    </div>
                   </div>
-                  <div className="font-semibold text-slate-800 text-sm">
-                    {event.name}
+                  <div className="mt-2 mr-4">
+                    <button
+                      onClick={() => onDelete("event", event.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={20} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -352,12 +488,22 @@ function Hierarchy({
                     <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all">
                       <div className="w-4" />
                       <Calendar size={16} className="text-blue-500" />
-                      <div className="flex-1">
-                        <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
-                          COMPETITION
+                      <div className="flex-1 flex justify-between">
+                        <div>
+                          <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
+                            COMPETITION
+                          </div>
+                          <div className="font-semibold text-slate-800 text-sm">
+                            {event.competition.name}
+                          </div>
                         </div>
-                        <div className="font-semibold text-slate-800 text-sm">
-                          {event.competition.name}
+                        <div className="mt-2 mr-4">
+                          <button
+                            onClick={() => onDelete("competition", event.id)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 size={20} />
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -371,6 +517,7 @@ function Hierarchy({
                           eventId={event.id}
                           onAddChoice={onAddChoice}
                           onAddSubCategory={onAddSubCategory}
+                          onDelete={onDelete}
                         />
                       ))}
 
