@@ -72,6 +72,9 @@ export const contestant = pgTable("contestant", {
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
 
+// to do: criteria for judging table
+// to do: scores table
+
 // relations
 export const eventRelation = relations(event, ({ many }) => ({
   competitions: many(competition),
