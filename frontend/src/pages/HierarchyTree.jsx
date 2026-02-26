@@ -9,7 +9,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-// ─── CATEGORY NODE ────────────────────────────────────────────────
 export function CategoryNode({
   category,
   eventId,
@@ -123,7 +122,6 @@ export function CategoryNode({
   );
 }
 
-// ─── HIERARCHY ────────────────────────────────────────────────
 export function Hierarchy({
   events,
   onAddCompetition,

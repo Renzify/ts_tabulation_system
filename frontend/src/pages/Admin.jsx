@@ -2,18 +2,11 @@ import { useRef, useState, useReducer } from "react";
 import { Hierarchy } from "./HierarchyTree";
 import ModalInput from "../components/Modals";
 import eventsReducer from "../reducers/eventsReducer";
-import {
-  addChoiceRecursive,
-  addSubCategoryRecursive,
-  deleteCategoryRecursive,
-  deleteChoiceRecursive,
-} from "../utils/treeHelpers";
 
 function Admin() {
   const modalRef = useRef(null);
 
   const [events, dispatch] = useReducer(eventsReducer, []);
-  const [input, setInput] = useState("");
   const [modalConfig, setModalConfig] = useState({
     type: null,
     eventId: null,
@@ -71,7 +64,6 @@ function Admin() {
         break;
     }
 
-    setInput("");
     modalRef.current.close();
   };
 
