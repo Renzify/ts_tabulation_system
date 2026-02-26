@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import * as createQuery from "../db/queries/create.queries.ts";
 import * as readQuery from "../db/queries/select.queries.ts";
 import * as updateQuery from "../db/queries/update.queries.ts";
