@@ -125,79 +125,80 @@ function Admin() {
   };
 
   const handleDelete = (type, eventId, categoryId = null, itemId = null) => {
-    if (type === "event") {
-      setEvents(events.filter((event) => event.id !== eventId));
-    }
+    switch (type) {
+      case "event":
+        setEvents(events.filter((event) => event.id !== eventId));
+        break;
 
-    if (type === "competition") {
-      setEvents(
-        events.map((event) =>
-          event.id === eventId ? { ...event, competition: null } : event,
-        ),
-      );
-    }
+      case "competition":
+        setEvents(
+          events.map((event) =>
+            event.id === eventId ? { ...event, competition: null } : event,
+          ),
+        );
+        break;
 
-    if (type === "category") {
-      setEvents(
-        events.map((event) =>
-          event.id === eventId
-            ? {
-                ...event,
-                competition: {
-                  ...event.competition,
-                  categories: deleteCategoryRecursive(
-                    event.competition.categories,
-                    categoryId,
-                  ),
-                },
-              }
-            : event,
-        ),
-      );
-    }
+      case "category":
+        setEvents(
+          events.map((event) =>
+            event.id === eventId
+              ? {
+                  ...event,
+                  competition: {
+                    ...event.competition,
+                    categories: deleteCategoryRecursive(
+                      event.competition.categories,
+                      categoryId,
+                    ),
+                  },
+                }
+              : event,
+          ),
+        );
+        break;
 
-    if (type === "choice") {
-      setEvents(
-        events.map((event) =>
-          event.id === eventId
-            ? {
-                ...event,
-                competition: {
-                  ...event.competition,
-                  categories: deleteChoiceRecursive(
-                    event.competition.categories,
-                    itemId,
-                  ),
-                },
-              }
-            : event,
-        ),
-      );
-    }
+      case "choice":
+        setEvents(
+          events.map((event) =>
+            event.id === eventId
+              ? {
+                  ...event,
+                  competition: {
+                    ...event.competition,
+                    categories: deleteChoiceRecursive(
+                      event.competition.categories,
+                      itemId,
+                    ),
+                  },
+                }
+              : event,
+          ),
+        );
+        break;
 
-    if (type === "subCategory") {
-      setEvents(
-        events.map((event) =>
-          event.id === eventId
-            ? {
-                ...event,
-                competition: {
-                  ...event.competition,
-                  categories: event.competition.categories.map((cat) =>
-                    cat.id === categoryId
-                      ? {
-                          ...cat,
-                          subCategories: cat.subCategories.filter(
-                            (sub) => sub.id !== itemId,
-                          ),
-                        }
-                      : cat,
-                  ),
-                },
-              }
-            : event,
-        ),
-      );
+      case "subCategory":
+        setEvents(
+          events.map((event) =>
+            event.id === eventId
+              ? {
+                  ...event,
+                  competition: {
+                    ...event.competition,
+                    categories: event.competition.categories.map((cat) =>
+                      cat.id === categoryId
+                        ? {
+                            ...cat,
+                            subCategories: cat.subCategories.filter(
+                              (sub) => sub.id !== itemId,
+                            ),
+                          }
+                        : cat,
+                    ),
+                  },
+                }
+              : event,
+          ),
+        );
     }
   };
 
