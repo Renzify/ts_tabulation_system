@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Trophy,
   Calendar,
@@ -27,6 +27,76 @@ function Admin() {
     modalRef.current.showModal();
   };
 
+  const addChoiceRecursive = (categories, categoryId, input) => {
+    return categories.map((cat) => {
+      if (cat.id === categoryId) {
+        return {
+          ...cat,
+          choices: [...cat.choices, { id: Date.now(), name: input }],
+        };
+      }
+
+      return {
+        ...cat,
+        subCategories: addChoiceRecursive(
+          cat.subCategories || [],
+          categoryId,
+          input,
+        ),
+      };
+    });
+  };
+
+  // 🔥 Add sub-category recursively
+  const addSubCategoryRecursive = (categories, categoryId, input) => {
+    return categories.map((cat) => {
+      if (cat.id === categoryId) {
+        return {
+          ...cat,
+          subCategories: [
+            ...(cat.subCategories || []),
+            {
+              id: Date.now(),
+              name: input,
+              choices: [],
+              subCategories: [],
+            },
+          ],
+        };
+      }
+
+      return {
+        ...cat,
+        subCategories: addSubCategoryRecursive(
+          cat.subCategories || [],
+          categoryId,
+          input,
+        ),
+      };
+    });
+  };
+
+  // 🔥 Delete category recursively
+  const deleteCategoryRecursive = (categories, categoryId) => {
+    return categories
+      .filter((cat) => cat.id !== categoryId)
+      .map((cat) => ({
+        ...cat,
+        subCategories: deleteCategoryRecursive(
+          cat.subCategories || [],
+          categoryId,
+        ),
+      }));
+  };
+
+  // 🔥 Delete choice recursively
+  const deleteChoiceRecursive = (categories, choiceId) => {
+    return categories.map((cat) => ({
+      ...cat,
+      choices: cat.choices.filter((c) => c.id !== choiceId),
+      subCategories: deleteChoiceRecursive(cat.subCategories || [], choiceId),
+    }));
+  };
   const handleConfirm = () => {
     if (input.trim() === "") return;
     const { type, eventId, categoryId } = modalConfig;
@@ -83,16 +153,10 @@ function Admin() {
                 ...event,
                 competition: {
                   ...event.competition,
-                  categories: event.competition.categories.map((cat) =>
-                    cat.id === categoryId
-                      ? {
-                          ...cat,
-                          choices: [
-                            ...cat.choices,
-                            { id: Date.now(), name: input },
-                          ],
-                        }
-                      : cat,
+                  categories: addChoiceRecursive(
+                    event.competition.categories,
+                    categoryId,
+                    input,
                   ),
                 },
               }
@@ -109,16 +173,10 @@ function Admin() {
                 ...event,
                 competition: {
                   ...event.competition,
-                  categories: event.competition.categories.map((cat) =>
-                    cat.id === categoryId
-                      ? {
-                          ...cat,
-                          subCategories: [
-                            ...cat.subCategories,
-                            { id: Date.now(), name: input, choices: [] },
-                          ],
-                        }
-                      : cat,
+                  categories: addSubCategoryRecursive(
+                    event.competition.categories,
+                    categoryId,
+                    input,
                   ),
                 },
               }
@@ -152,8 +210,9 @@ function Admin() {
                 ...event,
                 competition: {
                   ...event.competition,
-                  categories: event.competition.categories.filter(
-                    (cat) => cat.id !== categoryId,
+                  categories: deleteCategoryRecursive(
+                    event.competition.categories,
+                    categoryId,
                   ),
                 },
               }
@@ -170,15 +229,9 @@ function Admin() {
                 ...event,
                 competition: {
                   ...event.competition,
-                  categories: event.competition.categories.map((cat) =>
-                    cat.id === categoryId
-                      ? {
-                          ...cat,
-                          choices: cat.choices.filter(
-                            (choice) => choice.id !== itemId,
-                          ),
-                        }
-                      : cat,
+                  categories: deleteChoiceRecursive(
+                    event.competition.categories,
+                    itemId,
                   ),
                 },
               }
@@ -384,35 +437,15 @@ function CategoryNode({
           ))}
 
           {/* Sub-categories */}
-          {category.subCategories.map((sub) => (
-            <div
+          {category.subCategories?.map((sub) => (
+            <CategoryNode
               key={sub.id}
-              className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm"
-            >
-              <div className="w-4" />
-              <Tag size={16} className="text-pink-500" />
-              <div className="flex-1 flex flex justify-between">
-                <div>
-                  <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
-                    SUB-CATEGORY
-                  </div>
-                  <div className="font-semibold text-slate-800 text-sm">
-                    {sub.name}
-                  </div>
-                </div>
-
-                <div className="mt-2 mr-4">
-                  <button
-                    onClick={() =>
-                      onDelete("subCategory", eventId, category.id, sub.id)
-                    }
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 size={20} />
-                  </button>
-                </div>
-              </div>
-            </div>
+              category={sub}
+              eventId={eventId}
+              onAddChoice={onAddChoice}
+              onAddSubCategory={onAddSubCategory}
+              onDelete={onDelete}
+            />
           ))}
 
           {/* Add Choice + Add Sub-Category buttons */}
