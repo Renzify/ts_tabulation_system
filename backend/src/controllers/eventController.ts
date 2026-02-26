@@ -3,12 +3,12 @@ import * as createQuery from "../db/queries/create.queries.ts";
 import * as readQuery from "../db/queries/select.queries.ts";
 import * as updateQuery from "../db/queries/update.queries.ts";
 import * as deleteQuery from "../db/queries/delete.queries.ts";
-import * as idSelectQuery from "../db/queries/id-select.queries.ts";
+import * as idReadQuery from "../db/queries/id-select.queries.ts";
 
 // select all event
 export async function getAllEvent(req: Request, res: Response) {
   try {
-    const events = await selectQuery.getAllEvents();
+    const events = await readQuery.getAllEvents();
     res.status(200).json(events);
   } catch (error) {
     console.error("getAllEvent controller error:", error);
@@ -20,7 +20,7 @@ export async function getAllEvent(req: Request, res: Response) {
 export async function getEventById(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const event = await idSelectQuery.getEventById(id);
+    const event = await idReadQuery.getEventById(id);
 
     if (!event) {
       res.status(404).json({ message: "Event not found" }); // if event does not exist
@@ -37,11 +37,11 @@ export async function getEventById(req: Request, res: Response) {
 // create event
 export async function createEvent(req: Request, res: Response) {
   try {
-    const { eventName, eventDesc } = req.body;
+    const { inputEventName, inputEventDesc } = req.body;
 
-    const createdEvent = await create({
-      eventName,
-      eventDesc,
+    const createdEvent = await createQuery.createEvent({
+      eventName: inputEventName,
+      eventDesc: inputEventDesc,
     });
 
     res.status(201).json(createdEvent);
@@ -55,23 +55,18 @@ export async function createEvent(req: Request, res: Response) {
 export async function updateEvent(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const { eventName, eventDesc } = req.body;
+    const { inputEventName, inputEventDesc } = req.body;
 
-    const existingEvent = await idSelectQuery.getEventById(id);
+    const existingEvent = await idReadQuery.getEventById(id);
 
     if (!existingEvent) {
       res.status(404).json({ message: "Event not found" }); // if event does not exist
       return;
     }
 
-    if (existingEvent.id !== id) {
-      res.status(403).json({ message: "You can only update your own event" });
-      return;
-    }
-
-    export const updatedEvent = await upsertQuery.upsertEvent(id, {
-      eventName,
-      eventDesc,
+    const updatedEvent = await updateQuery.updateEvent(id, {
+      eventName: inputEventName,
+      eventDesc: inputEventDesc,
     });
 
     res.status(200).json(updateEvent);
@@ -84,22 +79,16 @@ export async function updateEvent(req: Request, res: Response) {
 // delete event
 export async function deleteEvent(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const { eventName, eventDesc } = req.body;
+    const id = req.params.id as string;
 
-    const existingEvent = await queries.getEventById(id);
+    const existingEvent = await idReadQuery.getEventById(id);
 
     if (!existingEvent) {
       res.status(404).json({ message: "Event not found" }); // if event does not exist
       return;
     }
 
-    if (existingEvent.id !== id) {
-      res.status(403).json({ message: "You can only update your own event" });
-      return;
-    }
-
-    await queries.deleteEvent(id);
+    await deleteQuery.deleteEvent(id);
     res.status(200).json({ message: "Event deleted successfully" });
   } catch (error) {
     console.error("deleteEvent controller error:", error);
