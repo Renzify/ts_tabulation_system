@@ -78,7 +78,7 @@ export const contestant = pgTable("contestant", {
 
 export const criteria = pgTable("criteria", {
   id: uuid("id").defaultRandom().primaryKey(),
-  choiceId: uuid("choice_id")
+  choiceId: uuid("criteria_id")
     .notNull()
     .references(() => choice.id, { onDelete: "cascade" }),
   criterion: text("criterion").notNull(),
@@ -89,7 +89,7 @@ export const criteria = pgTable("criteria", {
 
 export const scores = pgTable("scores", {
   id: uuid("id").defaultRandom().primaryKey(),
-  judgeId: uuid("choice_id")
+  judgeId: uuid("judge_id")
     .notNull()
     .references(() => choice.id, { onDelete: "cascade" }),
   contestantId: uuid("contestant_id")

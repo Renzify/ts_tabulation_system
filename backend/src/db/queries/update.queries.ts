@@ -7,12 +7,16 @@ import {
   choice,
   judge,
   contestant,
+  criteria,
+  scores,
   type NewEvent,
   type NewCompetition,
   type NewCategory,
   type NewChoice,
   type NewJudge,
   type NewContestant,
+  type NewCriteria,
+  type NewScore,
 } from "../schema.ts";
 
 // Update Queries
@@ -88,5 +92,31 @@ export const updateContestant = async (
     .where(eq(contestant.id, contestant_id))
     .returning();
 
-  return updateContestant;
+  return updatedContestant;
+};
+
+export const updateCriteria = async (
+  criteria_id: string,
+  data: Partial<NewCriteria>,
+) => {
+  const [updatedCriteria] = await db
+    .update(criteria)
+    .set(data)
+    .where(eq(criteria.id, criteria_id))
+    .returning();
+
+  return updatedCriteria;
+};
+
+export const updateScore = async (
+  score_id: string,
+  data: Partial<NewScore>,
+) => {
+  const [updatedScore] = await db
+    .update(contestant)
+    .set(data)
+    .where(eq(contestant.id, score_id))
+    .returning();
+
+  return updatedScore;
 };

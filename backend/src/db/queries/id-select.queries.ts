@@ -7,6 +7,8 @@ import {
   choice,
   judge,
   contestant,
+  criteria,
+  scores,
 } from "../schema.ts";
 
 export const getEventById = async (id: string) => {
@@ -31,4 +33,12 @@ export const getJudgeById = async (id: string) => {
 
 export const getContestantById = async (id: string) => {
   return await db.select().from(contestant).where(eq(contestant.id, id));
+};
+
+export const getCriteriaById = async (id: string) => {
+  return await db.select().from(criteria).where(eq(criteria.id, id));
+};
+
+export const getScoreById = async (id: string) => {
+  return await db.select().from(scores).where(eq(scores.id, id));
 };
