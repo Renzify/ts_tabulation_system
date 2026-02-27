@@ -3,6 +3,8 @@ import {
   addSubCategoryRecursive,
   deleteCategoryRecursive,
   deleteChoiceRecursive,
+  updateCategoryRecursive,
+  updateChoiceRecursive,
 } from "../utils/treeHelpers";
 
 function eventsReducer(state, action) {
@@ -66,6 +68,27 @@ function eventsReducer(state, action) {
                     subCategories: [],
                   },
                 ],
+              },
+            }
+          : event,
+      );
+
+    case "UPDATE_CATEGORY":
+      console.log("UPDATE_CATEGORY action:", action);
+      console.log("eventId:", action.eventId);
+      console.log("categoryId:", action.categoryId);
+      console.log("payload:", action.payload);
+      return state.map((event) =>
+        event.id === action.eventId
+          ? {
+              ...event,
+              competition: {
+                ...event.competition,
+                categories: updateCategoryRecursive(
+                  event.competition.categories,
+                  action.categoryId,
+                  action.payload,
+                ),
               },
             }
           : event,

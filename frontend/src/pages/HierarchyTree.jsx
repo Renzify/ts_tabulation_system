@@ -16,6 +16,7 @@ export function CategoryNode({
   onAddChoice,
   onAddSubCategory,
   onDelete,
+  onEditCategory,
 }) {
   const [expanded, setExpanded] = useState(true);
   const hasChoices = category.choices?.length > 0;
@@ -46,14 +47,24 @@ export function CategoryNode({
               {category.name}
             </div>
           </div>
-          <div className="mt-2 mr-4">
-            <Pencil />
-            <button
-              onClick={() => onDelete("category", eventId, category.id)}
-              className="text-red-500 hover:text-red-700"
-            >
-              <Trash2 size={20} />
-            </button>
+          <div className="flex flex-row mt-2 mr-4 gap-3">
+            <div className="text-slate-500 hover:text-slate-700">
+              <button
+                onClick={() => {
+                  onEditCategory(eventId, category.id);
+                }}
+              >
+                <Pencil size={20} />
+              </button>
+            </div>
+            <div>
+              <button
+                onClick={() => onDelete("category", eventId, category.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={20} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -133,6 +144,7 @@ export function Hierarchy({
   onDelete,
   onEditCompetition,
   onEditEvent,
+  onEditCategory,
 }) {
   return (
     <div className="flex justify-center items-center mt-7">
@@ -230,6 +242,7 @@ export function Hierarchy({
                           onAddChoice={onAddChoice}
                           onAddSubCategory={onAddSubCategory}
                           onDelete={onDelete}
+                          onEditCategory={onEditCategory}
                         />
                       ))}
 

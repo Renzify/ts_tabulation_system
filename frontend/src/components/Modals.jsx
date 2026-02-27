@@ -31,11 +31,25 @@ const modalLabels = {
     label: "Event name:",
     placeholder: "Event name",
   },
-
   editCompetition: {
     title: "Edit Competition",
     label: "Competition name:",
     placeholder: "Competition name",
+  },
+  editCategory: {
+    title: "Edit Category",
+    label: "Category name:",
+    placeholder: "Category name",
+  },
+  editChoice: {
+    title: "Edit Choice",
+    label: "Choice name:",
+    placeholder: "Choice name",
+  },
+  editSubCategory: {
+    title: "Edit Sub-category",
+    label: "Sub-category name:",
+    placeholder: "Sub-category name",
   },
 };
 
