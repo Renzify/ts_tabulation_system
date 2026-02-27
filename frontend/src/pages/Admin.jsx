@@ -5,7 +5,7 @@ import eventsReducer from "../reducers/eventsReducer";
 
 function Admin() {
   const modalRef = useRef(null);
-
+  const [editingItem, setEditingItem] = useState(null);
   const [events, dispatch] = useReducer(eventsReducer, []);
   const [modalConfig, setModalConfig] = useState({
     type: null,
@@ -14,9 +14,14 @@ function Admin() {
   });
 
   // One function to open the modal — just pass what type and which IDs
-  const openModal = (type, eventId = null, categoryId = null) => {
-    setModalConfig({ type, eventId, categoryId });
-    modalRef.current.open();
+  const openModal = (
+    type,
+    eventId = null,
+    categoryId = null,
+    defaultValue = "",
+  ) => {
+    setModalConfig({ type, eventId, categoryId, defaultValue });
+    modalRef.current.open(defaultValue);
   };
 
   const handleConfirm = (input) => {
@@ -59,6 +64,22 @@ function Admin() {
           type: "ADD_SUBCATEGORY",
           eventId,
           categoryId,
+          payload: input,
+        });
+        break;
+
+      case "editEvent":
+        dispatch({
+          type: "UPDATE_EVENT",
+          eventId,
+          payload: input,
+        });
+        break;
+
+      case "editCompetition":
+        dispatch({
+          type: "UPDATE_COMPETITION",
+          eventId,
           payload: input,
         });
         break;
@@ -117,6 +138,8 @@ function Admin() {
             openModal("subCategory", eventId, categoryId)
           }
           onDelete={handleDelete}
+          onEditEvent={(eventId) => openModal("editEvent", eventId)}
+          onEditCompetition={(eventId) => openModal("editCompetition", eventId)}
         />
       )}
     </div>

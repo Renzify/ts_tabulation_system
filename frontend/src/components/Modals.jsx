@@ -26,6 +26,17 @@ const modalLabels = {
     label: "Sub-category name:",
     placeholder: "Sub-category name",
   },
+  editEvent: {
+    title: "Edit Event",
+    label: "Event name:",
+    placeholder: "Event name",
+  },
+
+  editCompetition: {
+    title: "Edit Competition",
+    label: "Competition name:",
+    placeholder: "Competition name",
+  },
 };
 
 const ModalInput = forwardRef(({ type, onConfirm }, ref) => {
@@ -35,8 +46,8 @@ const ModalInput = forwardRef(({ type, onConfirm }, ref) => {
   const currentLabel = modalLabels[type] ?? {};
 
   useImperativeHandle(ref, () => ({
-    open: () => {
-      setInput("");
+    open: (defaultValue = "") => {
+      setInput(defaultValue);
       setIsOpen(true);
     },
     close: () => setIsOpen(false),

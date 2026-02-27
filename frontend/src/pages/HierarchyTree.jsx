@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronRight,
   Plus,
+  Pencil,
   Trash2,
 } from "lucide-react";
 
@@ -46,6 +47,7 @@ export function CategoryNode({
             </div>
           </div>
           <div className="mt-2 mr-4">
+            <Pencil />
             <button
               onClick={() => onDelete("category", eventId, category.id)}
               className="text-red-500 hover:text-red-700"
@@ -129,6 +131,8 @@ export function Hierarchy({
   onAddChoice,
   onAddSubCategory,
   onDelete,
+  onEditCompetition,
+  onEditEvent,
 }) {
   return (
     <div className="flex justify-center items-center mt-7">
@@ -156,13 +160,24 @@ export function Hierarchy({
                       {event.name}
                     </div>
                   </div>
-                  <div className="mt-2 mr-4">
-                    <button
-                      onClick={() => onDelete("event", event.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={20} />
-                    </button>
+                  <div className="flex flex-row mt-2 mr-4 gap-3">
+                    <div className="text-slate-500 hover:text-slate-700">
+                      <button
+                        onClick={() => {
+                          onEditEvent(event.id);
+                        }}
+                      >
+                        <Pencil size={20} />
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        onClick={() => onDelete("event", event.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -183,13 +198,24 @@ export function Hierarchy({
                             {event.competition.name}
                           </div>
                         </div>
-                        <div className="mt-2 mr-4">
-                          <button
-                            onClick={() => onDelete("competition", event.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 size={20} />
-                          </button>
+                        <div className="flex flex-row mt-2 mr-4 gap-3">
+                          <div className="text-slate-500 hover:text-slate-700">
+                            <button
+                              onClick={() => {
+                                onEditCompetition(event.id);
+                              }}
+                            >
+                              <Pencil size={20} />
+                            </button>
+                          </div>
+                          <div>
+                            <button
+                              onClick={() => onDelete("competition", event.id)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 size={20} />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

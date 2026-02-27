@@ -13,6 +13,16 @@ function eventsReducer(state, action) {
         { id: Date.now(), name: action.payload, competition: null },
       ];
 
+    case "UPDATE_EVENT":
+      return state.map((event) =>
+        event.id === action.eventId
+          ? {
+              ...event,
+              name: action.payload,
+            }
+          : event,
+      );
+
     case "ADD_COMPETITION":
       return state.map((event) =>
         event.id === action.eventId
@@ -22,6 +32,19 @@ function eventsReducer(state, action) {
                 id: Date.now(),
                 name: action.payload,
                 categories: [],
+              },
+            }
+          : event,
+      );
+
+    case "UPDATE_COMPETITION":
+      return state.map((event) =>
+        event.id === action.eventId
+          ? {
+              ...event,
+              competition: {
+                ...event.competition,
+                name: action.payload,
               },
             }
           : event,
