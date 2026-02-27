@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   uuid,
+  real,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -75,6 +76,31 @@ export const contestant = pgTable("contestant", {
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
 
+export const criteria = pgTable("criteria", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  choiceId: uuid("choice_id")
+    .notNull()
+    .references(() => choice.id, { onDelete: "cascade" }),
+  criterion: text("criterion").notNull(),
+  weight: real("weight").notNull().default(1),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const scores = pgTable("scores", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  judgeId: uuid("choice_id")
+    .notNull()
+    .references(() => choice.id, { onDelete: "cascade" }),
+  contestantId: uuid("contestant_id")
+    .notNull()
+    .references(() => contestant.id, { onDelete: "cascade" }),
+  criteriaId: uuid("criteria_id")
+    .notNull()
+    .references(() => criteria.id, { onDelete: "cascade" }),
+  scores: real().notNull().default(1),
+});
+
 // to do: criteria for judging table
 // to do: scores table
 
@@ -110,6 +136,20 @@ export const categoryRelation = relations(category, ({ one, many }) => ({
 export const choiceRelation = relations(choice, ({ many }) => ({
   judges: many(judge),
   contestants: many(contestant),
+  criteria: many(criteria),
+}));
+
+export const judgeRelation = relations(judge, ({ many }) => ({
+  criteria: many(criteria),
+  scores: many(scores),
+}));
+
+export const contestantRelation = relations(contestant, ({ many }) => ({
+  scores: many(scores),
+}));
+
+export const criteriaRelation = relations(criteria, ({ many }) => ({
+  scores: many(scores),
 }));
 
 // type inference
@@ -130,3 +170,9 @@ export type NewJudge = typeof judge.$inferInsert;
 
 export type Contestant = typeof contestant.$inferSelect;
 export type NewContestant = typeof contestant.$inferInsert;
+
+export type Criteria = typeof criteria.$inferSelect;
+export type NewCriteria = typeof criteria.$inferInsert;
+
+export type Score = typeof scores.$inferSelect;
+export type NewScore = typeof scores.$inferInsert;
