@@ -68,3 +68,38 @@ export const deleteChoiceRecursive = (categories, choiceId) => {
     subCategories: deleteChoiceRecursive(cat.subCategories || [], choiceId),
   }));
 };
+
+export const updateCategoryRecursive = (categories, categoryId, newName) => {
+  return categories.map((cat) => {
+    if (cat.id === categoryId) {
+      return { ...cat, name: newName };
+    }
+
+    if (cat.subCategories?.length) {
+      return {
+        ...cat,
+        subCategories: updateCategoryRecursive(
+          cat.subCategories,
+          categoryId,
+          newName,
+        ),
+      };
+    }
+
+    return cat;
+  });
+};
+
+export const updateChoiceRecursive = (categories, choiceId, newName) => {
+  return categories.map((cat) => ({
+    ...cat,
+    choices: cat.choices.map((choice) =>
+      choice.id === choiceId ? { ...choice, name: newName } : choice,
+    ),
+    subCategories: updateChoiceRecursive(
+      cat.subCategories || [],
+      choiceId,
+      newName,
+    ),
+  }));
+};
