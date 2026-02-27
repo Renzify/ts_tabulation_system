@@ -7,6 +7,8 @@ import {
   choice,
   judge,
   contestant,
+  criteria,
+  scores,
 } from "../schema.ts";
 
 export const deleteEvent = async (eventId: string) => {
@@ -61,4 +63,22 @@ export const deleteContestant = async (contestantId: string) => {
     .returning();
 
   return deletedContestant;
+};
+
+export const deleteCriteria = async (criteriaId: string) => {
+  const [deletedCriteria] = await db
+    .delete(criteria)
+    .where(eq(criteria.id, criteriaId))
+    .returning();
+
+  return deletedCriteria;
+};
+
+export const deleteScore = async (scoreId: string) => {
+  const [deletedScore] = await db
+    .delete(scores)
+    .where(eq(scores.id, scoreId))
+    .returning();
+
+  return deletedScore;
 };

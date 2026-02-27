@@ -6,12 +6,16 @@ import {
   choice,
   judge,
   contestant,
+  criteria,
+  scores,
   type NewEvent,
   type NewCompetition,
   type NewCategory,
   type NewChoice,
   type NewJudge,
   type NewContestant,
+  type NewCriteria,
+  type NewScore,
 } from "../schema.ts";
 
 // Create Queries
@@ -55,4 +59,16 @@ export const createContestant = async (data: NewContestant) => {
     .returning();
 
   return createdContestant;
+};
+
+export const createCriteria = async (data: NewCriteria) => {
+  const [createdCriteria] = await db.insert(criteria).values(data).returning();
+
+  return createdCriteria;
+};
+
+export const createScore = async (data: NewScore) => {
+  const [createdScore] = await db.insert(scores).values(data).returning();
+
+  return createdScore;
 };
