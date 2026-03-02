@@ -1,6 +1,5 @@
 import {
   pgTable,
-  serial,
   integer,
   text,
   timestamp,
@@ -48,7 +47,7 @@ export const choice = pgTable("choice", {
     .references(() => category.id, { onDelete: "cascade" }),
   choiceName: text("choice_name").notNull(),
   choiceDesc: text("choice_desc").notNull(),
-  noOfJudges: uuid("no_of_judges").notNull(),
+  noOfJudges: integer("no_of_judges").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
