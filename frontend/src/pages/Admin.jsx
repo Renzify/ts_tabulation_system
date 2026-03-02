@@ -1,4 +1,4 @@
-import { useRef, useState, useReducer } from "react";
+import { useRef, useState, useReducer, useEffect } from "react";
 import { Hierarchy } from "./HierarchyTree";
 import ModalInput from "../components/Modals";
 import eventsReducer from "../reducers/eventsReducer";
@@ -6,6 +6,24 @@ import { api } from "../lib/axios";
 import axios from "axios";
 
 function Admin() {
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/event/");
+        // normalize to match your frontend state shape
+        const normalizedEvents = res.data.map((e) => ({
+          id: e.id,
+          name: e.eventName,
+          competitions: [], // you can fetch competitions separately
+        }));
+        dispatch({ type: "SET_EVENTS", payload: normalizedEvents });
+      } catch (err) {
+        console.error("Failed to fetch events from DB:", err);
+      }
+    };
+
+    fetchEvents();
+  }, []);
   const modalRef = useRef(null);
   const [events, dispatch] = useReducer(eventsReducer, []);
   const [modalConfig, setModalConfig] = useState({
@@ -130,7 +148,7 @@ function Admin() {
             catFKey: categoryId,
             choNameInput: input,
             choDescInput: "Choice Description",
-            noJudgesInput: "1",
+            noJudgesInput: 1,
           });
 
           dispatch({
@@ -237,6 +255,23 @@ function Admin() {
       >
         Add Event
       </button>
+      <div>
+        {events.length === 0 ? (
+          <p>No events found.</p>
+        ) : (
+          events.map((eventItem) => (
+            <div key={eventItem.id} className="event-card border p-2 mb-2">
+              <h2 className="font-bold">{eventItem.name}</h2>
+              <button
+                onClick={() => console.log("Edit event", eventItem.id)}
+                className="btn btn-primary mt-1"
+              >
+                Edit
+              </button>
+            </div>
+          ))
+        )}
+      </div>
       {/*  Hierarchy */}
       {events.length > 0 && (
         <Hierarchy
