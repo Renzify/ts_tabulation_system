@@ -225,10 +225,9 @@ export function CompetitionNode({
           {/* Add Category button */}
           <div className="flex flex-col">
             <div className="ml-[22px] h-4 border-l-2 border-dashed border-slate-300" />
-            <div className="flex items-center ml-3">
-              <div className="w-4 border-t-2 border-dashed border-slate-300" />
+            <div className="flex items-center mt-1">
               <button
-                className="flex items-center gap-1.5 text-xs font-semibold text-purple-500 hover:text-white hover:bg-purple-500 border border-purple-300 hover:border-purple-500 px-3 py-1.5 rounded-lg transition-all ml-1"
+                className="flex items-center gap-1.5 text-xs font-semibold text-purple-500 hover:text-white hover:bg-purple-500 border border-purple-300 hover:border-purple-500 px-3 py-1.5 rounded-lg transition-all"
                 onClick={() => onAddCategory(eventId, competition.id)}
               >
                 <Plus size={13} /> Add Category
@@ -316,10 +315,9 @@ export function Hierarchy({
                 {/* Add Competition button */}
                 <div className="flex flex-col">
                   <div className="ml-[22px] h-4 border-l-2 border-dashed border-slate-300" />
-                  <div className="flex items-center ml-3">
-                    <div className="w-4 border-t-2 border-dashed border-slate-300" />
+                  <div className="flex items-center mt-1">
                     <button
-                      className="flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:text-white hover:bg-blue-500 border border-blue-300 hover:border-blue-500 px-3 py-1.5 rounded-lg transition-all ml-1"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:text-white hover:bg-blue-500 border border-blue-300 hover:border-blue-500 px-3 py-1.5 rounded-lg transition-all"
                       onClick={() => onAddCompetition(event.id)}
                     >
                       <Plus size={13} /> Add Competition
