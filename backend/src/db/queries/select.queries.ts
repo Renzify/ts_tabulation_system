@@ -11,35 +11,44 @@ import {
   scores,
 } from "../schema.ts";
 
+// Get all queries
+
 // Get all events
 export const getAllEvents = async () => {
   return await db.select().from(event);
 };
 
+// Get all competitions
 export const getAllCompetitions = async () => {
   return await db.select().from(competition);
 };
 
+// Get all categories
 export const getAllCategories = async () => {
   return await db.select().from(category);
 };
 
+// Get all choices
 export const getAllChoices = async () => {
   return await db.select().from(choice);
 };
 
+// Get all judges
 export const getAllJudges = async () => {
   return await db.select().from(judge);
 };
 
+// Get all contestants
 export const getAllContestants = async () => {
   return await db.select().from(contestant);
 };
 
+// Get all criterias
 export const getAllCriterias = async () => {
   return await db.select().from(criteria);
 };
 
+// Get all scores
 export const getAllScores = async () => {
   return await db.select().from(scores);
 };

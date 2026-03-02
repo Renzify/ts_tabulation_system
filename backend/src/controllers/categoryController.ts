@@ -11,7 +11,7 @@ export async function getCategory(req: Request, res: Response) {
     const categories = await readQuery.getAllCategories();
     res.status(200).json(categories);
   } catch (error) {
-    console.error("selectCategory controller error:", error);
+    console.error("getCategory controller error:", error);
     res.status(500).json({ message: "Failed to get categories" });
   }
 }
@@ -29,7 +29,7 @@ export async function getCategoryById(req: Request, res: Response) {
 
     res.status(200).json(category);
   } catch (error) {
-    console.error("selectCategoryById controller error:", error);
+    console.error("getCategoryById controller error:", error);
     res.status(500).json({ message: "Failed to get category" });
   }
 }
@@ -37,12 +37,12 @@ export async function getCategoryById(req: Request, res: Response) {
 // create category
 export async function createCategory(req: Request, res: Response) {
   try {
-    const { id, inputCategoryName, inputCategoryDesc } = req.body;
+    const { comFKey, catNameInput, catDescInput } = req.body;
 
     const createdCategory = await createQuery.createCategory({
-      competitionId: id,
-      categoryName: inputCategoryName,
-      categoryDesc: inputCategoryDesc,
+      competitionId: comFKey,
+      categoryName: catNameInput,
+      categoryDesc: catDescInput,
     });
 
     res.status(201).json(createdCategory);
@@ -56,7 +56,7 @@ export async function createCategory(req: Request, res: Response) {
 export async function updateCategory(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const { inputCategoryName, inputCategoryDesc } = req.body;
+    const { catNameInput, catDescInput } = req.body;
 
     const existingCategory = await idReadQuery.getCategoryById(id);
 
@@ -66,8 +66,8 @@ export async function updateCategory(req: Request, res: Response) {
     }
 
     const updatedCategory = await updateQuery.updateCategory(id, {
-      categoryName: inputCategoryName,
-      categoryDesc: inputCategoryDesc,
+      categoryName: catNameInput,
+      categoryDesc: catDescInput,
     });
 
     res.status(200).json(updatedCategory);
