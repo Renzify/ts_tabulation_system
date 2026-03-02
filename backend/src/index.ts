@@ -7,7 +7,6 @@ import categoryRoutes from "./routes/categoryRoutes.ts";
 import choiceRoutes from "./routes/choiceRoutes.ts";
 import judgeRoutes from "./routes/judgeRoutes.ts";
 import contestantRoutes from "./routes/contestantRoutes.ts";
-import testingRoutes from "./routes/testingRouter.ts";
 
 const app = express();
 
@@ -22,7 +21,6 @@ app.use("/api/category", categoryRoutes);
 app.use("/api/choice", choiceRoutes);
 app.use("/api/judge", judgeRoutes);
 app.use("/api/contestant", contestantRoutes);
-app.use("/api/events", testingRoutes);
 
 app.listen(PORT, () => {
   console.log("Server is running in port: ", PORT);
