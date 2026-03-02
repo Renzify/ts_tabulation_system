@@ -128,7 +128,12 @@ function eventsReducer(state, action) {
               categories: addChoiceRecursive(
                 comp.categories,
                 action.categoryId,
-                action.payload, // pass full object
+                {
+                  id: action.payload.id,
+                  name: action.payload.choiceName, // map for frontend
+                  description: action.payload.choiceDesc,
+                  noOfJudges: action.payload.noOfJudges,
+                },
               ),
             }))
           : event,
@@ -186,6 +191,9 @@ function eventsReducer(state, action) {
 
     case "DELETE_EVENT":
       return state.filter((event) => event.id !== action.eventId);
+
+    case "SET_EVENTS":
+      return action.payload;
 
     default:
       return state;
