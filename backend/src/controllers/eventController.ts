@@ -5,24 +5,24 @@ import * as updateQuery from "../db/queries/update.queries.ts";
 import * as deleteQuery from "../db/queries/delete.queries.ts";
 import * as idReadQuery from "../db/queries/id-select.queries.ts";
 
-// select all event
+// select all Event
 export async function getAllEvent(req: Request, res: Response) {
   try {
     const events = await readQuery.getAllEvents();
     res.status(200).json(events);
   } catch (error) {
     console.error("getAllEvent controller error:", error);
-    res.status(500).json({ message: "Failed getting all event" });
+    res.status(500).json({ message: "Failed getting all Event" });
   }
 }
 
-// select event by id
+// select Event by id
 export async function getEventById(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
     const event = await idReadQuery.getEventById(id);
 
-    if (!event) {
+    if (!Event) {
       res.status(404).json({ message: "Event not found" }); // if event does not exist
       return;
     }
@@ -30,18 +30,18 @@ export async function getEventById(req: Request, res: Response) {
     res.status(200).json(event);
   } catch (error) {
     console.error("Get getEventById controller error:", error);
-    res.status(500).json({ message: "Failed getting event by id" });
+    res.status(500).json({ message: "Failed getting Event by id" });
   }
 }
 
-// create event
+// create Event
 export async function createEvent(req: Request, res: Response) {
   try {
-    const { inputEventName, inputEventDesc } = req.body;
+    const { eveNameInput, eveDescInput } = req.body;
 
     const createdEvent = await createQuery.createEvent({
-      eventName: inputEventName,
-      eventDesc: inputEventDesc,
+      eventName: eveNameInput,
+      eventDesc: eveDescInput,
     });
 
     res.status(201).json(createdEvent);
@@ -51,11 +51,11 @@ export async function createEvent(req: Request, res: Response) {
   }
 }
 
-// update event
+// update Event
 export async function updateEvent(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const { inputEventName, inputEventDesc } = req.body;
+    const { eveNameInput, eveDescInput } = req.body;
 
     const existingEvent = await idReadQuery.getEventById(id);
 
@@ -65,18 +65,18 @@ export async function updateEvent(req: Request, res: Response) {
     }
 
     const updatedEvent = await updateQuery.updateEvent(id, {
-      eventName: inputEventName,
-      eventDesc: inputEventDesc,
+      eventName: eveNameInput,
+      eventDesc: eveDescInput,
     });
 
-    res.status(200).json(updateEvent);
+    res.status(200).json(updatedEvent);
   } catch (error) {
     console.error("updateEvent controller error:", error);
     res.status(500).json({ message: "Failed updating event" });
   }
 }
 
-// delete event
+// delete Event
 export async function deleteEvent(req: Request, res: Response) {
   try {
     const id = req.params.id as string;

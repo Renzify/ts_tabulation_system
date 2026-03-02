@@ -38,17 +38,17 @@ export async function getJudgeById(req: Request, res: Response) {
 export async function createJudge(req: Request, res: Response) {
   try {
     // to do id
-    const { id, judgeFirstName, judgeLastName, judgeSpe } = req.body;
+    const { choFKey, judgeFName, judgeLame, judgeSpe } = req.body;
 
-    if (!judgeFirstName || !judgeLastName || !judgeSpe) {
+    if (!judgeFName || !judgeLame || !judgeSpe) {
       return res.status(400).json({
         error: "First name, Last name, and specialization are required",
       });
     }
     const createdJudge = await createQuery.createJudge({
-      choiceId: id,
-      firstName: judgeFirstName,
-      lastName: judgeLastName,
+      choiceId: choFKey,
+      firstName: judgeFName,
+      lastName: judgeLame,
       specialization: judgeSpe,
     });
 
@@ -63,7 +63,7 @@ export async function createJudge(req: Request, res: Response) {
 export async function updateJudge(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const { judgeFirstName, judgeLastName, judgeSpe } = req.body;
+    const { judgeFName, judgeLame, judgeSpe } = req.body;
 
     const existingJudge = await idReadQuery.getJudgeById(id);
 
@@ -73,8 +73,8 @@ export async function updateJudge(req: Request, res: Response) {
     }
 
     const updatedJudge = await updateQuery.updateJudge(id, {
-      firstName: judgeFirstName,
-      lastName: judgeLastName,
+      firstName: judgeFName,
+      lastName: judgeLame,
       specialization: judgeSpe,
     });
 

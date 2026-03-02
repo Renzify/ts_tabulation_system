@@ -20,6 +20,8 @@ import {
 } from "../schema.ts";
 
 // Update Queries
+
+// Update Event
 export const updateEvent = async (eventId: string, data: Partial<NewEvent>) => {
   const [updatedEvent] = await db
     .update(event)
@@ -30,6 +32,7 @@ export const updateEvent = async (eventId: string, data: Partial<NewEvent>) => {
   return updatedEvent;
 };
 
+// Update Competition
 export const updateCompetition = async (
   competition_id: string,
   data: Partial<NewCompetition>,
@@ -43,6 +46,7 @@ export const updateCompetition = async (
   return updatedCompetition;
 };
 
+// Update Category
 export const updateCategory = async (
   category_id: string,
   data: Partial<NewCategory>,
@@ -56,6 +60,7 @@ export const updateCategory = async (
   return updatedCategory;
 };
 
+// Update Choice
 export const updateChoice = async (
   choice_id: string,
   data: Partial<NewChoice>,
@@ -69,6 +74,7 @@ export const updateChoice = async (
   return updatedChoice;
 };
 
+// Update Judge
 export const updateJudge = async (
   judge_id: string,
   data: Partial<NewJudge>,
@@ -82,6 +88,7 @@ export const updateJudge = async (
   return updatedJudge;
 };
 
+// Update Contestant
 export const updateContestant = async (
   contestant_id: string,
   data: Partial<NewContestant>,
@@ -95,6 +102,7 @@ export const updateContestant = async (
   return updatedContestant;
 };
 
+// Update Criteria
 export const updateCriteria = async (
   criteria_id: string,
   data: Partial<NewCriteria>,
@@ -108,6 +116,7 @@ export const updateCriteria = async (
   return updatedCriteria;
 };
 
+// Update Score
 export const updateScore = async (
   score_id: string,
   data: Partial<NewScore>,

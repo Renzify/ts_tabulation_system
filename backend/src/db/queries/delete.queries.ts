@@ -11,6 +11,9 @@ import {
   scores,
 } from "../schema.ts";
 
+// Delete Queries
+
+// Delete Event
 export const deleteEvent = async (eventId: string) => {
   const [deletedEvent] = await db
     .delete(event)
@@ -20,6 +23,7 @@ export const deleteEvent = async (eventId: string) => {
   return deletedEvent;
 };
 
+// Delete Competition
 export const deleteCompetition = async (competitionId: string) => {
   const [deletedCompetition] = await db
     .delete(competition)
@@ -29,6 +33,7 @@ export const deleteCompetition = async (competitionId: string) => {
   return deletedCompetition;
 };
 
+// Delete Category
 export const deleteCategory = async (categoryId: string) => {
   const [deletedCategory] = await db
     .delete(category)
@@ -38,6 +43,7 @@ export const deleteCategory = async (categoryId: string) => {
   return deletedCategory;
 };
 
+// Delete Choice
 export const deleteChoice = async (choiceId: string) => {
   const [deletedChoice] = await db
     .delete(choice)
@@ -47,6 +53,7 @@ export const deleteChoice = async (choiceId: string) => {
   return deletedChoice;
 };
 
+// Delete Judge
 export const deleteJudge = async (judgeId: string) => {
   const [deletedJudge] = await db
     .delete(judge)
@@ -56,6 +63,7 @@ export const deleteJudge = async (judgeId: string) => {
   return deletedJudge;
 };
 
+// Delete Contestant
 export const deleteContestant = async (contestantId: string) => {
   const [deletedContestant] = await db
     .delete(contestant)
@@ -65,6 +73,7 @@ export const deleteContestant = async (contestantId: string) => {
   return deletedContestant;
 };
 
+// Delete Criteria
 export const deleteCriteria = async (criteriaId: string) => {
   const [deletedCriteria] = await db
     .delete(criteria)
@@ -74,6 +83,7 @@ export const deleteCriteria = async (criteriaId: string) => {
   return deletedCriteria;
 };
 
+// Delete Score
 export const deleteScore = async (scoreId: string) => {
   const [deletedScore] = await db
     .delete(scores)

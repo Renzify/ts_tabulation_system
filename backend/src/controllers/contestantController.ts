@@ -8,10 +8,10 @@ import * as idReadQuery from "../db/queries/id-select.queries.ts";
 // select Contestant
 export async function getContestant(req: Request, res: Response) {
   try {
-    const Contestants = await readQuery.getAllContestants();
-    res.status(200).json(Contestants);
+    const contestants = await readQuery.getAllContestants();
+    res.status(200).json(contestants);
   } catch (error) {
-    console.error("selectContestant controller error:", error);
+    console.error("getContestant controller error:", error);
     res.status(500).json({ message: "Failed to get Contestants" });
   }
 }
@@ -20,14 +20,14 @@ export async function getContestant(req: Request, res: Response) {
 export async function getContestantById(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const Contestant = await idReadQuery.getContestantById(id);
+    const contestant = await idReadQuery.getContestantById(id);
 
-    if (!Contestant) {
+    if (!contestant) {
       res.status(404).json({ message: "Contestant not found" });
       return;
     }
 
-    res.status(200).json(Contestant);
+    res.status(200).json(contestant);
   } catch (error) {
     console.error("selectContestantById controller error:", error);
     res.status(500).json({ message: "Failed to get Contestant" });
@@ -37,12 +37,12 @@ export async function getContestantById(req: Request, res: Response) {
 // create Contestant
 export async function createContestant(req: Request, res: Response) {
   try {
-    const { id, inputFirstName, inputLastName } = req.body;
+    const { choFKey, fNameInput, lNameInput } = req.body;
 
     const createdContestant = await createQuery.createContestant({
-      choiceId: id,
-      firstName: inputFirstName,
-      lastName: inputLastName,
+      choiceId: choFKey,
+      firstName: fNameInput,
+      lastName: lNameInput,
     });
 
     res.status(201).json(createdContestant);
@@ -56,7 +56,7 @@ export async function createContestant(req: Request, res: Response) {
 export async function updateContestant(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const { inputFirstName, inputLastName } = req.body;
+    const { fNameInput, lNameInput } = req.body;
 
     const existingContestant = await idReadQuery.getContestantById(id);
 
@@ -66,8 +66,8 @@ export async function updateContestant(req: Request, res: Response) {
     }
 
     const updatedContestant = await updateQuery.updateContestant(id, {
-      firstName: inputFirstName,
-      lastName: inputLastName,
+      firstName: fNameInput,
+      lastName: lNameInput,
     });
 
     res.status(200).json(updatedContestant);

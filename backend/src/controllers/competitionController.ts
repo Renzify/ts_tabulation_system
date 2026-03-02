@@ -37,12 +37,12 @@ export async function getCompetitionById(req: Request, res: Response) {
 // create competition
 export async function createCompetition(req: Request, res: Response) {
   try {
-    const { id, inputCompetitionName, inputCompetitionDesc } = req.body;
+    const { eveFKey, comNameInput, comDescInput } = req.body;
 
     const createdCompetition = await createQuery.createCompetition({
-      eventId: id,
-      competitionName: inputCompetitionName,
-      competitionDesc: inputCompetitionDesc,
+      eventId: eveFKey,
+      competitionName: comNameInput,
+      competitionDesc: comDescInput,
     });
 
     res.status(201).json(createdCompetition);
@@ -56,7 +56,7 @@ export async function createCompetition(req: Request, res: Response) {
 export async function updateCompetition(req: Request, res: Response) {
   try {
     const id = req.params.id as string;
-    const { inputCompetitionName, inputCompetitionDesc } = req.body;
+    const { comNameInput, comDescInput } = req.body;
 
     const existingCompetition = await readQuery.getCompetitionsByEventId(id);
 
@@ -66,11 +66,11 @@ export async function updateCompetition(req: Request, res: Response) {
     }
 
     const updatedCompetition = await updateQuery.updateCompetition(id, {
-      competitionName: inputCompetitionName,
-      competitionDesc: inputCompetitionDesc,
+      competitionName: comNameInput,
+      competitionDesc: comDescInput,
     });
 
-    res.status(200).json(updateCompetition);
+    res.status(200).json(updatedCompetition);
   } catch (error) {
     console.error("updateCompetition controller error:", error);
     res.status(500).json({ message: "Failed to update competition" });
