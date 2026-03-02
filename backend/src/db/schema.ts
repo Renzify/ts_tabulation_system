@@ -101,9 +101,6 @@ export const scores = pgTable("scores", {
   scores: real().notNull().default(1),
 });
 
-// to do: criteria for judging table
-// to do: scores table
-
 // relations
 export const eventRelation = relations(event, ({ many }) => ({
   competitions: many(competition),
