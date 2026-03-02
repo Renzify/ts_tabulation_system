@@ -17,6 +17,7 @@ export function CategoryNode({
   onAddSubCategory,
   onDelete,
   onEditCategory,
+  onEditChoice,
 }) {
   const [expanded, setExpanded] = useState(true);
   const hasChoices = category.choices?.length > 0;
@@ -88,15 +89,26 @@ export function CategoryNode({
                     {choice.name}
                   </div>
                 </div>
-                <div className="mt-2 mr-4">
-                  <button
-                    onClick={() =>
-                      onDelete("choice", eventId, category.id, choice.id)
-                    }
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 size={20} />
-                  </button>
+                <div className="flex flex-row mt-2 mr-4 gap-3">
+                  <div>
+                    <button
+                      onClick={() => {
+                        onEditChoice(eventId, category.id, choice.id);
+                      }}
+                    >
+                      <Pencil size={20} />
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() =>
+                        onDelete("choice", eventId, category.id, choice.id)
+                      }
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -111,6 +123,7 @@ export function CategoryNode({
               onAddChoice={onAddChoice}
               onAddSubCategory={onAddSubCategory}
               onDelete={onDelete}
+              onEditCategory={onEditCategory}
             />
           ))}
 
@@ -145,6 +158,7 @@ export function Hierarchy({
   onEditCompetition,
   onEditEvent,
   onEditCategory,
+  onEditChoice,
 }) {
   return (
     <div className="flex justify-center items-center mt-7">
@@ -243,6 +257,7 @@ export function Hierarchy({
                           onAddSubCategory={onAddSubCategory}
                           onDelete={onDelete}
                           onEditCategory={onEditCategory}
+                          onEditChoice={onEditChoice}
                         />
                       ))}
 

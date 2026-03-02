@@ -111,6 +111,27 @@ function eventsReducer(state, action) {
           : event,
       );
 
+    case "UPDATE_CHOICE":
+      console.log("UPDATE_CHOICE action:", action);
+      console.log("eventId:", action.eventId);
+      console.log("categoryId:", action.categoryId);
+      console.log("payload:", action.payload);
+      return state.map((event) =>
+        event.id === action.eventId
+          ? {
+              ...event,
+              competition: {
+                ...event.competition,
+                categories: updateChoiceRecursive(
+                  event.competition.categories,
+                  action.choiceId,
+                  action.payload,
+                ),
+              },
+            }
+          : event,
+      );
+
     case "ADD_SUBCATEGORY":
       return state.map((event) =>
         event.id === action.eventId
