@@ -7,21 +7,26 @@ import {
   updateChoiceRecursive,
 } from "../utils/treeHelpers";
 
+// Helper: update a specific competition within an event's competitions array
+const mapCompetition = (event, competitionId, updater) => ({
+  ...event,
+  competitions: event.competitions.map((comp) =>
+    comp.id === competitionId ? updater(comp) : comp,
+  ),
+});
+
 function eventsReducer(state, action) {
   switch (action.type) {
     case "ADD_EVENT":
       return [
         ...state,
-        { id: Date.now(), name: action.payload, competition: null },
+        { id: Date.now(), name: action.payload, competitions: [] }, // ← array, not null
       ];
 
     case "UPDATE_EVENT":
       return state.map((event) =>
         event.id === action.eventId
-          ? {
-              ...event,
-              name: action.payload,
-            }
+          ? { ...event, name: action.payload }
           : event,
       );
 
@@ -30,11 +35,10 @@ function eventsReducer(state, action) {
         event.id === action.eventId
           ? {
               ...event,
-              competition: {
-                id: Date.now(),
-                name: action.payload,
-                categories: [],
-              },
+              competitions: [
+                ...event.competitions,
+                { id: Date.now(), name: action.payload, categories: [] },
+              ],
             }
           : event,
       );
@@ -42,12 +46,21 @@ function eventsReducer(state, action) {
     case "UPDATE_COMPETITION":
       return state.map((event) =>
         event.id === action.eventId
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              name: action.payload,
+            }))
+          : event,
+      );
+
+    case "DELETE_COMPETITION":
+      return state.map((event) =>
+        event.id === action.eventId
           ? {
               ...event,
-              competition: {
-                ...event.competition,
-                name: action.payload,
-              },
+              competitions: event.competitions.filter(
+                (comp) => comp.id !== action.competitionId,
+              ),
             }
           : event,
       );
@@ -55,161 +68,115 @@ function eventsReducer(state, action) {
     case "ADD_CATEGORY":
       return state.map((event) =>
         event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: [
-                  ...event.competition.categories,
-                  {
-                    id: Date.now(),
-                    name: action.payload,
-                    choices: [],
-                    subCategories: [],
-                  },
-                ],
-              },
-            }
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: [
+                ...comp.categories,
+                {
+                  id: Date.now(),
+                  name: action.payload,
+                  choices: [],
+                  subCategories: [],
+                },
+              ],
+            }))
           : event,
       );
 
     case "UPDATE_CATEGORY":
-      console.log("UPDATE_CATEGORY action:", action);
-      console.log("eventId:", action.eventId);
-      console.log("categoryId:", action.categoryId);
-      console.log("payload:", action.payload);
       return state.map((event) =>
         event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: updateCategoryRecursive(
-                  event.competition.categories,
-                  action.categoryId,
-                  action.payload,
-                ),
-              },
-            }
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: updateCategoryRecursive(
+                comp.categories,
+                action.categoryId,
+                action.payload,
+              ),
+            }))
+          : event,
+      );
+
+    case "DELETE_CATEGORY":
+      return state.map((event) =>
+        event.id === action.eventId
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: deleteCategoryRecursive(
+                comp.categories,
+                action.categoryId,
+              ),
+            }))
           : event,
       );
 
     case "ADD_CHOICE":
       return state.map((event) =>
         event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: addChoiceRecursive(
-                  event.competition.categories,
-                  action.categoryId,
-                  action.payload,
-                ),
-              },
-            }
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: addChoiceRecursive(
+                comp.categories,
+                action.categoryId,
+                action.payload,
+              ),
+            }))
           : event,
       );
 
     case "UPDATE_CHOICE":
-      console.log("UPDATE_CHOICE action:", action);
-      console.log("eventId:", action.eventId);
-      console.log("categoryId:", action.categoryId);
-      console.log("payload:", action.payload);
       return state.map((event) =>
         event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: updateChoiceRecursive(
-                  event.competition.categories,
-                  action.choiceId,
-                  action.payload,
-                ),
-              },
-            }
-          : event,
-      );
-
-    case "ADD_SUBCATEGORY":
-      return state.map((event) =>
-        event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: addSubCategoryRecursive(
-                  event.competition.categories,
-                  action.categoryId,
-                  action.payload,
-                ),
-              },
-            }
-          : event,
-      );
-
-    case "DELETE_EVENT":
-      return state.filter((event) => event.id !== action.eventId);
-
-    case "DELETE_COMPETITION":
-      return state.map((event) =>
-        event.id === action.eventId ? { ...event, competition: null } : event,
-      );
-
-    case "DELETE_CATEGORY":
-      return state.map((event) =>
-        event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: deleteCategoryRecursive(
-                  event.competition.categories,
-                  action.categoryId,
-                ),
-              },
-            }
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: updateChoiceRecursive(
+                comp.categories,
+                action.choiceId,
+                action.payload,
+              ),
+            }))
           : event,
       );
 
     case "DELETE_CHOICE":
       return state.map((event) =>
         event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: deleteChoiceRecursive(
-                  event.competition.categories,
-                  action.itemId,
-                ),
-              },
-            }
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: deleteChoiceRecursive(comp.categories, action.itemId),
+            }))
+          : event,
+      );
+
+    case "ADD_SUBCATEGORY":
+      return state.map((event) =>
+        event.id === action.eventId
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: addSubCategoryRecursive(
+                comp.categories,
+                action.categoryId,
+                action.payload,
+              ),
+            }))
           : event,
       );
 
     case "DELETE_SUBCATEGORY":
       return state.map((event) =>
         event.id === action.eventId
-          ? {
-              ...event,
-              competition: {
-                ...event.competition,
-                categories: event.competition.categories.map((cat) =>
-                  cat.id === categoryId
-                    ? {
-                        ...cat,
-                        subCategories: cat.subCategories.filter(
-                          (sub) => sub.id !== itemId,
-                        ),
-                      }
-                    : cat,
-                ),
-              },
-            }
+          ? mapCompetition(event, action.competitionId, (comp) => ({
+              ...comp,
+              categories: deleteCategoryRecursive(
+                comp.categories,
+                action.itemId,
+              ),
+            }))
           : event,
       );
+
+    case "DELETE_EVENT":
+      return state.filter((event) => event.id !== action.eventId);
 
     default:
       return state;

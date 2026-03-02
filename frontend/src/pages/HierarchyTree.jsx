@@ -13,6 +13,7 @@ import {
 export function CategoryNode({
   category,
   eventId,
+  competitionId,
   onAddChoice,
   onAddSubCategory,
   onDelete,
@@ -49,30 +50,28 @@ export function CategoryNode({
             </div>
           </div>
           <div className="flex flex-row mt-2 mr-4 gap-3">
-            <div className="text-slate-500 hover:text-slate-700">
-              <button
-                onClick={() => {
-                  onEditCategory(eventId, category.id);
-                }}
-              >
-                <Pencil size={20} />
-              </button>
-            </div>
-            <div>
-              <button
-                onClick={() => onDelete("category", eventId, category.id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <Trash2 size={20} />
-              </button>
-            </div>
+            <button
+              onClick={() =>
+                onEditCategory(eventId, competitionId, category.id)
+              }
+              className="text-slate-500 hover:text-slate-700"
+            >
+              <Pencil size={20} />
+            </button>
+            <button
+              onClick={() =>
+                onDelete("category", eventId, competitionId, category.id)
+              }
+              className="text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={20} />
+            </button>
           </div>
         </div>
       </div>
 
       {expanded && (
         <div className="ml-6 pl-4 border-l-2 border-slate-200 flex flex-col gap-2 mt-2">
-          {/* Choices */}
           {category.choices.map((choice) => (
             <div
               key={choice.id}
@@ -90,57 +89,151 @@ export function CategoryNode({
                   </div>
                 </div>
                 <div className="flex flex-row mt-2 mr-4 gap-3">
-                  <div>
-                    <button
-                      onClick={() => {
-                        onEditChoice(eventId, category.id, choice.id);
-                      }}
-                    >
-                      <Pencil size={20} />
-                    </button>
-                  </div>
-                  <div>
-                    <button
-                      onClick={() =>
-                        onDelete("choice", eventId, category.id, choice.id)
-                      }
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() =>
+                      onEditChoice(
+                        eventId,
+                        competitionId,
+                        category.id,
+                        choice.id,
+                      )
+                    }
+                  >
+                    <Pencil size={20} />
+                  </button>
+                  <button
+                    onClick={() =>
+                      onDelete(
+                        "choice",
+                        eventId,
+                        competitionId,
+                        category.id,
+                        choice.id,
+                      )
+                    }
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={20} />
+                  </button>
                 </div>
               </div>
             </div>
           ))}
 
-          {/* Sub-categories */}
           {category.subCategories?.map((sub) => (
             <CategoryNode
               key={sub.id}
               category={sub}
               eventId={eventId}
+              competitionId={competitionId}
               onAddChoice={onAddChoice}
               onAddSubCategory={onAddSubCategory}
               onDelete={onDelete}
               onEditCategory={onEditCategory}
+              onEditChoice={onEditChoice}
             />
           ))}
 
-          {/* Add Choice + Add Sub-Category buttons */}
           <div className="flex gap-2 mt-1">
             <button
               className="flex items-center gap-1 text-xs font-semibold text-green-500 hover:text-white hover:bg-green-500 border border-green-300 hover:border-green-500 px-3 py-1.5 rounded-lg transition-all"
-              onClick={() => onAddChoice(eventId, category.id)}
+              onClick={() => onAddChoice(eventId, competitionId, category.id)}
             >
               <Plus size={12} /> Add Choice
             </button>
             <button
               className="flex items-center gap-1 text-xs font-semibold text-purple-500 hover:text-white hover:bg-purple-500 border border-purple-300 hover:border-purple-500 px-3 py-1.5 rounded-lg transition-all"
-              onClick={() => onAddSubCategory(eventId, category.id)}
+              onClick={() =>
+                onAddSubCategory(eventId, competitionId, category.id)
+              }
             >
               <Plus size={12} /> Add Category
             </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// NEW: CompetitionNode handles expand/collapse + its categories
+export function CompetitionNode({
+  competition,
+  eventId,
+  onAddCategory,
+  onAddChoice,
+  onAddSubCategory,
+  onDelete,
+  onEditCompetition,
+  onEditCategory,
+  onEditChoice,
+}) {
+  const [expanded, setExpanded] = useState(true);
+
+  return (
+    <div className="flex flex-col">
+      <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-slate-400 hover:text-slate-600"
+        >
+          {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+        </button>
+        <Calendar size={16} className="text-blue-500" />
+        <div className="flex-1 flex justify-between">
+          <div>
+            <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
+              COMPETITION
+            </div>
+            <div className="font-semibold text-slate-800 text-sm">
+              {competition.name}
+            </div>
+          </div>
+          <div className="flex flex-row mt-2 mr-4 gap-3">
+            <button
+              onClick={() => onEditCompetition(eventId, competition.id)}
+              className="text-slate-500 hover:text-slate-700"
+            >
+              <Pencil size={20} />
+            </button>
+            <button
+              onClick={() => onDelete("competition", eventId, competition.id)}
+              className="text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={20} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {expanded && (
+        <div className="ml-6 pl-4 border-l-2 border-slate-200 flex flex-col gap-2 mt-2">
+          {competition.categories.map((cat) => (
+            <CategoryNode
+              key={cat.id}
+              category={cat}
+              eventId={eventId}
+              competitionId={competition.id}
+              onAddChoice={onAddChoice}
+              onAddSubCategory={onAddSubCategory}
+              onDelete={onDelete}
+              onEditCategory={onEditCategory}
+              onEditChoice={onEditChoice}
+            />
+          ))}
+
+          {/* Add Category button */}
+          <div className="flex flex-col">
+            <div className="ml-[22px] h-4 border-l-2 border-dashed border-slate-300" />
+            <div className="flex items-center ml-3">
+              <div className="w-4 border-t-2 border-dashed border-slate-300" />
+              <button
+                className="flex items-center gap-1.5 text-xs font-semibold text-purple-500 hover:text-white hover:bg-purple-500 border border-purple-300 hover:border-purple-500 px-3 py-1.5 rounded-lg transition-all ml-1"
+                onClick={() => onAddCategory(eventId, competition.id)}
+              >
+                <Plus size={13} /> Add Category
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -187,109 +280,52 @@ export function Hierarchy({
                     </div>
                   </div>
                   <div className="flex flex-row mt-2 mr-4 gap-3">
-                    <div className="text-slate-500 hover:text-slate-700">
-                      <button
-                        onClick={() => {
-                          onEditEvent(event.id);
-                        }}
-                      >
-                        <Pencil size={20} />
-                      </button>
-                    </div>
-                    <div>
-                      <button
-                        onClick={() => onDelete("event", event.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 size={20} />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => onEditEvent(event.id)}
+                      className="text-slate-500 hover:text-slate-700"
+                    >
+                      <Pencil size={20} />
+                    </button>
+                    <button
+                      onClick={() => onDelete("event", event.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={20} />
+                    </button>
                   </div>
                 </div>
               </div>
 
+              {/* Competitions (now an array) */}
               <div className="ml-6 pl-4 border-l-2 border-slate-200 flex flex-col gap-2 mt-2">
-                {/* Competition */}
-                {event.competition ? (
-                  <>
-                    <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all">
-                      <div className="w-4" />
-                      <Calendar size={16} className="text-blue-500" />
-                      <div className="flex-1 flex justify-between">
-                        <div>
-                          <div className="text-[10px] uppercase font-semibold tracking-widest text-slate-400">
-                            COMPETITION
-                          </div>
-                          <div className="font-semibold text-slate-800 text-sm">
-                            {event.competition.name}
-                          </div>
-                        </div>
-                        <div className="flex flex-row mt-2 mr-4 gap-3">
-                          <div className="text-slate-500 hover:text-slate-700">
-                            <button
-                              onClick={() => {
-                                onEditCompetition(event.id);
-                              }}
-                            >
-                              <Pencil size={20} />
-                            </button>
-                          </div>
-                          <div>
-                            <button
-                              onClick={() => onDelete("competition", event.id)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 size={20} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                {event.competitions?.map((competition) => (
+                  <CompetitionNode
+                    key={competition.id}
+                    competition={competition}
+                    eventId={event.id}
+                    onAddCategory={onAddCategory}
+                    onAddChoice={onAddChoice}
+                    onAddSubCategory={onAddSubCategory}
+                    onDelete={onDelete}
+                    onEditCompetition={onEditCompetition}
+                    onEditCategory={onEditCategory}
+                    onEditChoice={onEditChoice}
+                  />
+                ))}
 
-                    {/* Categories */}
-                    <div className="ml-6 pl-4 border-l-2 border-slate-200 flex flex-col gap-2">
-                      {event.competition.categories.map((cat) => (
-                        <CategoryNode
-                          key={cat.id}
-                          category={cat}
-                          eventId={event.id}
-                          onAddChoice={onAddChoice}
-                          onAddSubCategory={onAddSubCategory}
-                          onDelete={onDelete}
-                          onEditCategory={onEditCategory}
-                          onEditChoice={onEditChoice}
-                        />
-                      ))}
-
-                      {/* Add Category */}
-                      <div className="flex flex-col">
-                        <div className="ml-[22px] h-4 border-l-2 border-dashed border-slate-300" />
-                        <div className="flex items-center ml-3">
-                          <div className="w-4 border-t-2 border-dashed border-slate-300" />
-                          <button
-                            className="flex items-center gap-1.5 text-xs font-semibold text-purple-500 hover:text-white hover:bg-purple-500 border border-purple-300 hover:border-purple-500 px-3 py-1.5 rounded-lg transition-all ml-1"
-                            onClick={() => onAddCategory(event.id)}
-                          >
-                            <Plus size={13} /> Add Category
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex flex-col">
-                    <div className="ml-[22px] h-4 border-l-2 border-dashed border-slate-300" />
-                    <div className="flex items-center ml-3">
-                      <div className="w-4 border-t-2 border-dashed border-slate-300" />
-                      <button
-                        className="flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:text-white hover:bg-blue-500 border border-blue-300 hover:border-blue-500 px-3 py-1.5 rounded-lg transition-all ml-1"
-                        onClick={() => onAddCompetition(event.id)}
-                      >
-                        <Plus size={13} /> Add Competition
-                      </button>
-                    </div>
+                {/* Add Competition button */}
+                <div className="flex flex-col">
+                  <div className="ml-[22px] h-4 border-l-2 border-dashed border-slate-300" />
+                  <div className="flex items-center ml-3">
+                    <div className="w-4 border-t-2 border-dashed border-slate-300" />
+                    <button
+                      className="flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:text-white hover:bg-blue-500 border border-blue-300 hover:border-blue-500 px-3 py-1.5 rounded-lg transition-all ml-1"
+                      onClick={() => onAddCompetition(event.id)}
+                    >
+                      <Plus size={13} /> Add Competition
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           ))}
