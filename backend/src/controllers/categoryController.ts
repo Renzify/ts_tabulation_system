@@ -37,12 +37,13 @@ export async function getCategoryById(req: Request, res: Response) {
 // create category
 export async function createCategory(req: Request, res: Response) {
   try {
-    const { comFKey, catNameInput, catDescInput } = req.body;
+    const { comFKey, catNameInput, catDescInput, parentCategoryId } = req.body;
 
     const createdCategory = await createQuery.createCategory({
       competitionId: comFKey,
       categoryName: catNameInput,
       categoryDesc: catDescInput,
+      parentCategoryId: parentCategoryId ?? null,
     });
 
     res.status(201).json(createdCategory);
