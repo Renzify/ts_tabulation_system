@@ -6,7 +6,7 @@ export default function EventHierarchy({ eventId }) {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/api/events/${eventId}/full`)
+      .get(`http://localhost:3000/api/event/full/${eventId}`)
       .then((res) => setEvent(res.data))
       .catch((err) => console.error(err));
   }, [eventId]);
