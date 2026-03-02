@@ -16,18 +16,26 @@ function Admin() {
   const openModal = (
     type,
     eventId = null,
-    categoryId = null,
+    competitionId = null, // ← was categoryId
+    categoryId = null, // ← shift down
     choiceId = null,
     defaultValue = "",
   ) => {
-    setModalConfig({ type, eventId, categoryId, choiceId, defaultValue });
+    setModalConfig({
+      type,
+      eventId,
+      competitionId,
+      categoryId,
+      choiceId,
+      defaultValue,
+    });
     modalRef.current.open(defaultValue);
   };
 
   const handleConfirm = (input) => {
     if (input.trim() === "") return;
 
-    const { type, eventId, categoryId, choiceId } = modalConfig;
+    const { type, eventId, competitionId, categoryId, choiceId } = modalConfig;
 
     switch (type) {
       case "event":
@@ -46,6 +54,7 @@ function Admin() {
         dispatch({
           type: "ADD_CATEGORY",
           eventId,
+          competitionId,
           payload: input,
         });
         break;
@@ -55,6 +64,7 @@ function Admin() {
           type: "ADD_CHOICE",
           eventId,
           categoryId,
+          competitionId,
           payload: input,
         });
         break;
@@ -64,6 +74,7 @@ function Admin() {
           type: "ADD_SUBCATEGORY",
           eventId,
           categoryId,
+          competitionId,
           payload: input,
         });
         break;
@@ -80,6 +91,7 @@ function Admin() {
         dispatch({
           type: "UPDATE_COMPETITION",
           eventId,
+          competitionId,
           payload: input,
         });
         break;
@@ -89,6 +101,7 @@ function Admin() {
           type: "UPDATE_CATEGORY",
           eventId,
           categoryId,
+          competitionId,
           payload: input,
         });
         break;
@@ -99,6 +112,7 @@ function Admin() {
           eventId,
           categoryId,
           choiceId,
+          competitionId,
           payload: input,
         });
         break;
@@ -107,22 +121,33 @@ function Admin() {
     modalRef.current.close();
   };
 
-  const handleDelete = (type, eventId, categoryId = null, itemId = null) => {
+  const handleDelete = (
+    type,
+    eventId,
+    competitionId = null,
+    categoryId = null,
+    itemId = null,
+  ) => {
     switch (type) {
       case "event":
         dispatch({ type: "DELETE_EVENT", eventId });
         break;
 
       case "competition":
-        dispatch({ type: "DELETE_COMPETITION", eventId });
+        dispatch({ type: "DELETE_COMPETITION", eventId, competitionId });
         break;
 
       case "category":
-        dispatch({ type: "DELETE_CATEGORY", eventId, categoryId });
+        dispatch({
+          type: "DELETE_CATEGORY",
+          eventId,
+          categoryId,
+          competitionId,
+        });
         break;
 
       case "choice":
-        dispatch({ type: "DELETE_CHOICE", eventId, itemId });
+        dispatch({ type: "DELETE_CHOICE", eventId, itemId, competitionId });
         break;
 
       case "subCategory":
@@ -149,21 +174,31 @@ function Admin() {
         <Hierarchy
           events={events}
           onAddCompetition={(eventId) => openModal("competition", eventId)}
-          onAddCategory={(eventId) => openModal("category", eventId)}
-          onAddChoice={(eventId, categoryId) =>
-            openModal("choice", eventId, categoryId)
+          onAddCategory={(eventId, competitionId) =>
+            openModal("category", eventId, competitionId)
           }
-          onAddSubCategory={(eventId, categoryId) =>
-            openModal("subCategory", eventId, categoryId)
+          onAddChoice={(eventId, categoryId, competitionId) =>
+            openModal("choice", eventId, categoryId, competitionId)
+          }
+          onAddSubCategory={(eventId, categoryId, competitionId) =>
+            openModal("subCategory", eventId, categoryId, competitionId)
           }
           onDelete={handleDelete}
           onEditEvent={(eventId) => openModal("editEvent", eventId)}
-          onEditCompetition={(eventId) => openModal("editCompetition", eventId)}
-          onEditCategory={(eventId, categoryId) =>
-            openModal("editCategory", eventId, categoryId)
+          onEditCompetition={(eventId, competitionId) =>
+            openModal("editCompetition", eventId, competitionId)
           }
-          onEditChoice={(eventId, categoryId, choiceId) =>
-            openModal("editChoice", eventId, categoryId, choiceId)
+          onEditCategory={(eventId, categoryId, competitionId) =>
+            openModal("editCategory", eventId, categoryId, competitionId)
+          }
+          onEditChoice={(eventId, categoryId, choiceId, competitionId) =>
+            openModal(
+              "editChoice",
+              eventId,
+              categoryId,
+              choiceId,
+              competitionId,
+            )
           }
         />
       )}
