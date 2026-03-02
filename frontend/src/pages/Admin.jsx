@@ -17,16 +17,17 @@ function Admin() {
     type,
     eventId = null,
     categoryId = null,
+    choiceId = null,
     defaultValue = "",
   ) => {
-    setModalConfig({ type, eventId, categoryId, defaultValue });
+    setModalConfig({ type, eventId, categoryId, choiceId, defaultValue });
     modalRef.current.open(defaultValue);
   };
 
   const handleConfirm = (input) => {
     if (input.trim() === "") return;
 
-    const { type, eventId, categoryId } = modalConfig;
+    const { type, eventId, categoryId, choiceId } = modalConfig;
 
     switch (type) {
       case "event":
@@ -91,6 +92,16 @@ function Admin() {
           payload: input,
         });
         break;
+
+      case "editChoice":
+        dispatch({
+          type: "UPDATE_CHOICE",
+          eventId,
+          categoryId,
+          choiceId,
+          payload: input,
+        });
+        break;
     }
 
     modalRef.current.close();
@@ -150,6 +161,9 @@ function Admin() {
           onEditCompetition={(eventId) => openModal("editCompetition", eventId)}
           onEditCategory={(eventId, categoryId) =>
             openModal("editCategory", eventId, categoryId)
+          }
+          onEditChoice={(eventId, categoryId, choiceId) =>
+            openModal("editChoice", eventId, categoryId, choiceId)
           }
         />
       )}
