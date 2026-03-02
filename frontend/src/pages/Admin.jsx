@@ -2,6 +2,8 @@ import { useRef, useState, useReducer } from "react";
 import { Hierarchy } from "./HierarchyTree";
 import ModalInput from "../components/Modals";
 import eventsReducer from "../reducers/eventsReducer";
+import { api } from "../lib/axios";
+import axios from "axios";
 
 function Admin() {
   const modalRef = useRef(null);
@@ -32,93 +34,159 @@ function Admin() {
     modalRef.current.open(defaultValue);
   };
 
-  const handleConfirm = (input) => {
+  const handleConfirm = async (input) => {
     if (input.trim() === "") return;
 
-    const { type, eventId, competitionId, categoryId, choiceId } = modalConfig;
+    const {
+      type,
+      eventId,
+      competitionId,
+      categoryId,
+      choiceId,
+      desc,
+      judges,
+      noJudgesInput,
+    } = modalConfig;
 
-    switch (type) {
-      case "event":
-        dispatch({ type: "ADD_EVENT", payload: input });
-        break;
+    try {
+      switch (type) {
+        case "event": {
+          const res = await api.createEvent({
+            eveNameInput: input,
+            eveDescInput: "Event Description", // ← you can extend modal to capture desc
+          });
+          dispatch({ type: "ADD_EVENT", payload: res.data });
+          break;
+        }
 
-      case "competition":
-        dispatch({
-          type: "ADD_COMPETITION",
-          eventId,
-          payload: input,
-        });
-        break;
+        case "competition": {
+          const res = await api.createCompetition({
+            eveFKey: eventId,
+            comNameInput: input,
+            comDescInput: "Competition Description",
+          });
+          dispatch({
+            type: "ADD_COMPETITION",
+            eventId,
+            payload: res.data,
+          });
+          break;
+        }
 
-      case "category":
-        dispatch({
-          type: "ADD_CATEGORY",
-          eventId,
-          competitionId,
-          payload: input,
-        });
-        break;
+        case "category": {
+          const res = await api.createCategory({
+            comFKey: competitionId,
+            catNameInput: input,
+            catDescInput: "Category Description",
+          });
+          dispatch({
+            type: "ADD_CATEGORY",
+            eventId,
+            competitionId,
+            payload: res.data,
+          });
+          break;
+        }
 
-      case "choice":
-        dispatch({
-          type: "ADD_CHOICE",
-          eventId,
-          categoryId,
-          competitionId,
-          payload: input,
-        });
-        break;
+        case "category": {
+          const res = await api.createCategory({
+            comFKey: competitionId,
+            catNameInput: input,
+            catDescInput: "Category Description",
+            parentCategoryId: null, // ✅ root
+          });
 
-      case "subCategory":
-        dispatch({
-          type: "ADD_SUBCATEGORY",
-          eventId,
-          categoryId,
-          competitionId,
-          payload: input,
-        });
-        break;
+          dispatch({
+            type: "ADD_CATEGORY",
+            eventId,
+            competitionId,
+            payload: res.data,
+          });
 
-      case "editEvent":
-        dispatch({
-          type: "UPDATE_EVENT",
-          eventId,
-          payload: input,
-        });
-        break;
+          break;
+        }
 
-      case "editCompetition":
-        dispatch({
-          type: "UPDATE_COMPETITION",
-          eventId,
-          competitionId,
-          payload: input,
-        });
-        break;
+        case "subCategory": {
+          const res = await api.createCategory({
+            comFKey: competitionId,
+            catNameInput: input,
+            catDescInput: "Subcategory Description",
+            parentCategoryId: categoryId, // ✅ parent
+          });
 
-      case "editCategory":
-        dispatch({
-          type: "UPDATE_CATEGORY",
-          eventId,
-          categoryId,
-          competitionId,
-          payload: input,
-        });
-        break;
+          dispatch({
+            type: "ADD_SUBCATEGORY",
+            eventId,
+            competitionId,
+            categoryId,
+            payload: res.data,
+          });
 
-      case "editChoice":
-        dispatch({
-          type: "UPDATE_CHOICE",
-          eventId,
-          categoryId,
-          choiceId,
-          competitionId,
-          payload: input,
-        });
-        break;
+          break;
+        }
+
+        case "choice": {
+          const res = await api.createChoice({
+            catFKey: categoryId,
+            choNameInput: input,
+            choDescInput: "Choice Description",
+            noJudgesInput: "1",
+          });
+
+          dispatch({
+            type: "ADD_CHOICE",
+            eventId,
+            competitionId,
+            categoryId,
+            payload: res.data, // FULL DB OBJECT
+          });
+          break;
+        }
+
+        case "editEvent":
+          dispatch({
+            type: "UPDATE_EVENT",
+            eventId,
+            payload: input,
+          });
+          break;
+
+        case "editCompetition":
+          dispatch({
+            type: "UPDATE_COMPETITION",
+            eventId,
+            competitionId,
+            payload: input,
+          });
+          break;
+
+        case "editCategory":
+          dispatch({
+            type: "UPDATE_CATEGORY",
+            eventId,
+            categoryId,
+            competitionId,
+            payload: input,
+          });
+          break;
+
+        case "editChoice":
+          dispatch({
+            type: "UPDATE_CHOICE",
+            eventId,
+            categoryId,
+            choiceId,
+            competitionId,
+            payload: input,
+          });
+          break;
+      }
+
+      modalRef.current.close();
+    } catch (error) {
+      console.error("API error:", error);
+      alert("Failed to save item!");
     }
-
-    modalRef.current.close();
   };
 
   const handleDelete = (

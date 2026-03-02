@@ -20,7 +20,11 @@ function eventsReducer(state, action) {
     case "ADD_EVENT":
       return [
         ...state,
-        { id: Date.now(), name: action.payload, competitions: [] }, // ← array, not null
+        {
+          id: action.payload.id,
+          name: action.payload.eventName,
+          competitions: [],
+        },
       ];
 
     case "UPDATE_EVENT":
@@ -37,7 +41,11 @@ function eventsReducer(state, action) {
               ...event,
               competitions: [
                 ...event.competitions,
-                { id: Date.now(), name: action.payload, categories: [] },
+                {
+                  id: action.payload.id,
+                  name: action.payload.competitionName,
+                  categories: [],
+                },
               ],
             }
           : event,
@@ -73,8 +81,10 @@ function eventsReducer(state, action) {
               categories: [
                 ...comp.categories,
                 {
-                  id: Date.now(),
-                  name: action.payload,
+                  id: action.payload.id,
+                  name: action.payload.categoryName,
+                  description: action.payload.categoryDesc,
+                  parentCategoryId: action.payload.parentCategoryId,
                   choices: [],
                   subCategories: [],
                 },
@@ -118,7 +128,7 @@ function eventsReducer(state, action) {
               categories: addChoiceRecursive(
                 comp.categories,
                 action.categoryId,
-                action.payload,
+                action.payload, // pass full object
               ),
             }))
           : event,
@@ -155,7 +165,6 @@ function eventsReducer(state, action) {
               ...comp,
               categories: addSubCategoryRecursive(
                 comp.categories,
-                action.categoryId,
                 action.payload,
               ),
             }))

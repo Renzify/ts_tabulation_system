@@ -1,9 +1,12 @@
-export const addChoiceRecursive = (categories, categoryId, input) => {
+export const addChoiceRecursive = (categories, categoryId, newChoice) => {
   return categories.map((cat) => {
     if (cat.id === categoryId) {
       return {
         ...cat,
-        choices: [...cat.choices, { id: Date.now(), name: input }],
+        choices: [
+          ...(cat.choices || []),
+          newChoice, // real DB object
+        ],
       };
     }
 
@@ -12,23 +15,25 @@ export const addChoiceRecursive = (categories, categoryId, input) => {
       subCategories: addChoiceRecursive(
         cat.subCategories || [],
         categoryId,
-        input,
+        newChoice,
       ),
     };
   });
 };
 
 // Add sub-category recursively
-export const addSubCategoryRecursive = (categories, categoryId, input) => {
+export const addSubCategoryRecursive = (categories, payload) => {
   return categories.map((cat) => {
-    if (cat.id === categoryId) {
+    if (cat.id === payload.parentCategoryId) {
       return {
         ...cat,
         subCategories: [
           ...(cat.subCategories || []),
           {
-            id: Date.now(),
-            name: input,
+            id: payload.id,
+            name: payload.categoryName,
+            description: payload.categoryDesc,
+            parentCategoryId: payload.parentCategoryId,
             choices: [],
             subCategories: [],
           },
@@ -38,11 +43,7 @@ export const addSubCategoryRecursive = (categories, categoryId, input) => {
 
     return {
       ...cat,
-      subCategories: addSubCategoryRecursive(
-        cat.subCategories || [],
-        categoryId,
-        input,
-      ),
+      subCategories: addSubCategoryRecursive(cat.subCategories || [], payload),
     };
   });
 };
