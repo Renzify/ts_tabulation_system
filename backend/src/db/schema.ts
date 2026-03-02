@@ -97,7 +97,7 @@ export const scores = pgTable("scores", {
   criteriaId: uuid("criteria_id")
     .notNull()
     .references(() => criteria.id, { onDelete: "cascade" }),
-  scores: real().notNull().default(1),
+  scores: real().notNull(),
 });
 
 // relations
