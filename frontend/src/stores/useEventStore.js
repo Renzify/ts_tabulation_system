@@ -73,4 +73,59 @@ export const useEventStore = create((set, get) => ({
       toast.error(error.response.data.message);
     }
   },
+
+  initializeEventData: async (eventId) => {
+    const {
+      getAllEvents,
+      getAllCompetitions,
+      getAllCategory,
+      getAllChoices,
+      allEvents,
+      setSelectedEvent,
+    } = get();
+
+    // Load all base data
+    await Promise.all([
+      getAllEvents(),
+      getAllCompetitions(),
+      getAllCategory(),
+      getAllChoices(),
+    ]);
+
+    // Once events are fetched, find and set the selected event
+    const foundEvent = get().allEvents.find((e) => e.id === eventId);
+    if (foundEvent) {
+      setSelectedEvent(foundEvent);
+    }
+  },
+
+  getDetailsByEvent: (eventId) => {
+    const { allCompetitions, allCategories, allChoices } = get();
+
+    return allChoices
+      .map((choice) => {
+        const category = allCategories.find((c) => c.id === choice.categoryId);
+        if (!category) return null;
+
+        const competition = allCompetitions.find(
+          (comp) => comp.id === category.competitionId,
+        );
+        if (!competition || competition.eventId !== eventId) return null;
+
+        const subCategory = category.parentCategoryId
+          ? allCategories.find((c) => c.id === category.parentCategoryId)
+          : null;
+
+        return {
+          id: choice.id,
+          competitionName: competition.competitionName,
+          categoryName: subCategory
+            ? subCategory.categoryName
+            : category.categoryName,
+          subCategoryName: subCategory ? category.categoryName : null,
+          choiceName: choice.choiceName,
+        };
+      })
+      .filter(Boolean);
+  },
 }));
