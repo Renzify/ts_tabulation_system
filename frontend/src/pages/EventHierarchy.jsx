@@ -41,7 +41,6 @@ function EventHierarchy({ input }) {
 
     try {
       switch (type) {
-        // ---------- ADD ----------
         case "competition": {
           await api.createCompetition({
             eveFKey: eventId, // from useParams()
@@ -81,9 +80,7 @@ function EventHierarchy({ input }) {
           break;
         }
 
-        // ---------- EDIT ----------
         case "editEvent": {
-          // implement in api if you have it
           await api.updateEvent({
             eveId: eventId,
             eveNameInput: input,
@@ -120,7 +117,6 @@ function EventHierarchy({ input }) {
           break;
       }
 
-      // ✅ Always refetch full event after any mutation
       const res = await axiosInstance.get(`/event/full/${eventId}`);
       setEventData(normalizeEvent(res.data));
 

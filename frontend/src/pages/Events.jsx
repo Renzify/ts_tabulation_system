@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import AddEventButton from "../components/AddEventButton";
 import EventsList from "../components/EventList";
 import axios from "axios";
+import { axiosInstance } from "../lib/axios";
 
 function Events() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ function Events() {
     const { type, closeModal } = useModalStore.getState();
     if (type !== "event") return;
 
-    const res = await axios.post("http://localhost:3000/api/event", {
+    const res = await axiosInstance.post("/event", {
       eveNameInput: input,
       eveDescInput: "Event description",
     });
