@@ -51,28 +51,28 @@ export function useEventHierarchyConfirm({
           break;
 
         case "editEvent":
-          await api.updateEvent({
+          await api.updateEvent(eventId, {
             eveId: eventId,
             eveNameInput: input,
           });
           break;
 
         case "editCompetition":
-          await api.updateCompetition({
+          await api.updateCompetition(competitionId, {
             comId: competitionId,
             comNameInput: input,
           });
           break;
 
         case "editCategory":
-          await api.updateCategory({
+          await api.updateCategory(categoryId, {
             catId: categoryId,
             catNameInput: input,
           });
           break;
 
         case "editChoice":
-          await api.updateChoice({
+          await api.updateChoice(choiceId, {
             choId: choiceId,
             choNameInput: input,
           });

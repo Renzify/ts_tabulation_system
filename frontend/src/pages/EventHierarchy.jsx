@@ -83,7 +83,7 @@ function EventHierarchy({ input }) {
             value,
           )
         }
-        onDelete={() => {}} // add delete logic similarly
+        onDelete={() => {}}
       />
     </div>
   );
