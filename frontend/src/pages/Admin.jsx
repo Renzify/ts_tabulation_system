@@ -32,7 +32,7 @@ function Admin() {
     categoryId: null,
   });
 
-  // One function to open the modal
+  // A function to open the modal
   const openModal = (
     type,
     eventId = null,
@@ -55,16 +55,7 @@ function Admin() {
   const handleConfirm = async (input) => {
     if (input.trim() === "") return;
 
-    const {
-      type,
-      eventId,
-      competitionId,
-      categoryId,
-      choiceId,
-      desc,
-      judges,
-      noJudgesInput,
-    } = modalConfig;
+    const { type, eventId, competitionId, categoryId, choiceId } = modalConfig;
 
     try {
       switch (type) {
@@ -255,7 +246,7 @@ function Admin() {
       >
         Add Event
       </button>
-      <div>
+      {/* <div>
         {events.length === 0 ? (
           <p>No events found.</p>
         ) : (
@@ -271,7 +262,7 @@ function Admin() {
             </div>
           ))
         )}
-      </div>
+      </div> */}
       {/*  Hierarchy */}
       {events.length > 0 && (
         <Hierarchy
