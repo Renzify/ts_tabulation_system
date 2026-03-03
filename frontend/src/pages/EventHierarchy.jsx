@@ -5,12 +5,12 @@ import ModalInput from "../components/Modals";
 import { useModalStore } from "../stores/useModalStore";
 import { axiosInstance } from "../lib/axios";
 import { api } from "../lib/api";
+import { useEventHierarchyConfirm } from "../hooks/useEventHierarchyConfirm";
 
 function EventHierarchy({ input }) {
   const { eventId } = useParams();
   const [eventData, setEventData] = useState(null);
-  const { openModal, type, competitionId, categoryId, choiceId, closeModal } =
-    useModalStore();
+  const { openModal } = useModalStore();
   useEffect(() => {
     const fetchFullEvent = async () => {
       try {
@@ -27,105 +27,11 @@ function EventHierarchy({ input }) {
     if (eventId) fetchFullEvent();
   }, [eventId]);
 
-  const handleConfirm = async (input) => {
-    if (input.trim() === "") return;
-
-    const {
-      type,
-      competitionId,
-      categoryId,
-      choiceId,
-      defaultValue,
-      closeModal,
-    } = useModalStore.getState();
-
-    try {
-      switch (type) {
-        case "competition": {
-          await api.createCompetition({
-            eveFKey: eventId, // from useParams()
-            comNameInput: input,
-            comDescInput: "",
-          });
-          break;
-        }
-
-        case "category": {
-          await api.createCategory({
-            comFKey: competitionId,
-            catNameInput: input,
-            catDescInput: "",
-            parentCategoryId: null, // root
-          });
-          break;
-        }
-
-        case "subCategory": {
-          await api.createCategory({
-            comFKey: competitionId,
-            catNameInput: input,
-            catDescInput: "",
-            parentCategoryId: categoryId, // parent
-          });
-          break;
-        }
-
-        case "choice": {
-          await api.createChoice({
-            catFKey: categoryId,
-            choNameInput: input,
-            choDescInput: "",
-            noJudgesInput: 1,
-          });
-          break;
-        }
-
-        case "editEvent": {
-          await api.updateEvent({
-            eveId: eventId,
-            eveNameInput: input,
-          });
-          break;
-        }
-
-        case "editCompetition": {
-          await api.updateCompetition({
-            comId: competitionId,
-            comNameInput: input,
-          });
-          break;
-        }
-
-        case "editCategory": {
-          await api.updateCategory({
-            catId: categoryId,
-            catNameInput: input,
-          });
-          break;
-        }
-
-        case "editChoice": {
-          await api.updateChoice({
-            choId: choiceId,
-            choNameInput: input,
-          });
-          break;
-        }
-
-        default:
-          console.warn("Unhandled modal type:", type);
-          break;
-      }
-
-      const res = await axiosInstance.get(`/event/full/${eventId}`);
-      setEventData(normalizeEvent(res.data));
-
-      closeModal();
-    } catch (error) {
-      console.error("API error:", error);
-      alert("Failed to save item!");
-    }
-  };
+  const { handleConfirm } = useEventHierarchyConfirm({
+    eventId,
+    setEventData,
+    normalizeEvent,
+  });
 
   if (!eventData) return <p>Loading...</p>;
 
@@ -134,25 +40,48 @@ function EventHierarchy({ input }) {
       <ModalInput onConfirm={handleConfirm} input={input} />
       <Hierarchy
         events={[eventData]}
-        onAddCompetition={(eId) => openModal("competition", eId)}
-        onAddCategory={(eId, compId) => openModal("category", eId, compId)}
-        onAddChoice={(eId, compId, catId) =>
-          openModal("choice", eId, compId, catId)
+        onAddCompetition={(eventId) => openModal("competition", eventId)}
+        onAddCategory={(eventId, competitionId) =>
+          openModal("category", eventId, competitionId)
         }
-        onAddSubCategory={(eId, compId, catId) =>
-          openModal("subCategory", eId, compId, catId)
+        onAddChoice={(eventId, competitionId, categoryId) =>
+          openModal("choice", eventId, competitionId, categoryId)
         }
-        onEditCompetition={(eId, compId, val) =>
-          openModal("editCompetition", eId, compId, null, null, val)
+        onAddSubCategory={(eventId, competitionId, categoryId) =>
+          openModal("subCategory", eventId, competitionId, categoryId)
         }
-        onEditEvent={(eId, val) =>
-          openModal("editEvent", eId, null, null, null, val)
+        onEditCompetition={(eventId, competitionId, value) =>
+          openModal(
+            "editCompetition",
+            eventId,
+            competitionId,
+            null,
+            null,
+            value,
+          )
         }
-        onEditCategory={(eId, compId, catId, val) =>
-          openModal("editCategory", eId, compId, catId, null, val)
+        onEditEvent={(eventId, value) =>
+          openModal("editEvent", eventId, null, null, null, value)
         }
-        onEditChoice={(eId, catId, choId, compId, val) =>
-          openModal("editChoice", eId, compId, catId, choId, val)
+        onEditCategory={(eventId, competitionId, categoryId, value) =>
+          openModal(
+            "editCategory",
+            eventId,
+            competitionId,
+            categoryId,
+            null,
+            value,
+          )
+        }
+        onEditChoice={(eventId, categoryId, choiceId, competitionId, value) =>
+          openModal(
+            "editChoice",
+            eventId,
+            competitionId,
+            categoryId,
+            choiceId,
+            value,
+          )
         }
         onDelete={() => {}} // add delete logic similarly
       />
@@ -165,11 +94,11 @@ export default EventHierarchy;
 function normalizeEvent(data) {
   return {
     id: data.id,
-    name: data.eventName, // FIX: eventName → name
+    name: data.eventName,
     competitions:
       data.competitions?.map((comp) => ({
         id: comp.id,
-        name: comp.competitionName, // FIX: competitionName → name
+        name: comp.competitionName,
         categories: buildCategoryTree(comp.categories),
       })) || [],
   };
@@ -183,7 +112,7 @@ function buildCategoryTree(categories = []) {
   categories.forEach((cat) => {
     map[cat.id] = {
       id: cat.id,
-      name: cat.categoryName, // FIX: categoryName → name
+      name: cat.categoryName,
       choices:
         cat.choices?.map((choice) => ({
           id: choice.id,
@@ -194,7 +123,6 @@ function buildCategoryTree(categories = []) {
     };
   });
 
-  // Build tree
   categories.forEach((cat) => {
     if (cat.parentCategoryId) {
       map[cat.parentCategoryId]?.subCategories.push(map[cat.id]);
