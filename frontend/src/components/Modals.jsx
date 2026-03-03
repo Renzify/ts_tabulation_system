@@ -1,4 +1,6 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+// Modals.jsx
+import { useEffect, useState } from "react";
+import { useModalStore } from "../stores/useModalStore";
 
 const modalLabels = {
   event: {
@@ -53,27 +55,22 @@ const modalLabels = {
   },
 };
 
-const ModalInput = forwardRef(({ type, onConfirm }, ref) => {
-  const [input, setInput] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+const ModalInput = ({ onConfirm }) => {
+  const { isOpen, type, closeModal, defaultValue } = useModalStore();
+  const [input, setInput] = useState(defaultValue);
 
-  useImperativeHandle(ref, () => ({
-    open: (defaultValue = "", modalType = type) => {
-      setInput(defaultValue);
-      setModalType(modalType); // <- you need a local state for type
-      setIsOpen(true);
-    },
-    close: () => setIsOpen(false),
-  }));
+  // Sync input when modal opens with a new defaultValue
+  useEffect(() => {
+    setInput(defaultValue);
+  }, [defaultValue, isOpen]);
 
-  const [modalType, setModalType] = useState(type);
-  const currentLabel = modalLabels[modalType] ?? {};
+  const currentLabel = modalLabels[type] ?? {};
 
   const handleConfirm = () => {
     if (input.trim() === "") return;
     onConfirm(input);
     setInput("");
-    setIsOpen(false);
+    closeModal();
   };
 
   if (!isOpen) return null;
@@ -83,7 +80,7 @@ const ModalInput = forwardRef(({ type, onConfirm }, ref) => {
       <div className="modal-box">
         <button
           className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          onClick={() => setIsOpen(false)}
+          onClick={closeModal}
         >
           ✕
         </button>
@@ -109,6 +106,6 @@ const ModalInput = forwardRef(({ type, onConfirm }, ref) => {
       </div>
     </dialog>
   );
-});
+};
 
 export default ModalInput;

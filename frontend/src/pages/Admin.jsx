@@ -1,12 +1,17 @@
-import { useRef, useState, useReducer, useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { Hierarchy } from "./HierarchyTree";
 import ModalInput from "../components/Modals";
 import eventsReducer from "../reducers/eventsReducer";
 import { api } from "../lib/api";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { useModalStore } from "../stores/useModalStore";
 
 function Admin() {
+  const [events, dispatch] = useReducer(eventsReducer, []);
+  const navigate = useNavigate();
+  const { openModal } = useModalStore();
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -25,55 +30,26 @@ function Admin() {
 
     fetchEvents();
   }, []);
-  const modalRef = useRef(null);
-  const [events, dispatch] = useReducer(eventsReducer, []);
-  const [modalConfig, setModalConfig] = useState({
-    type: null,
-    eventId: null,
-    categoryId: null,
-  });
-  const navigate = useNavigate();
-  // A function to open the modal
-  const openModal = (
-    type,
-    eventId = null,
-    competitionId = null,
-    categoryId = null,
-    choiceId = null,
-    defaultValue = "",
-  ) => {
-    setModalConfig({
-      type,
-      eventId,
-      competitionId,
-      categoryId,
-      choiceId,
-      defaultValue,
-    });
-
-    // Pass type to modal explicitly
-    modalRef.current.open(defaultValue, type);
-  };
 
   const handleConfirm = async (input) => {
     if (input.trim() === "") return;
 
-    const { type, eventId, competitionId, categoryId, choiceId } = modalConfig;
+    const { type, eventId, competitionId, categoryId, choiceId, closeModal } =
+      useModalStore.getState();
 
     try {
       switch (type) {
-        case "event":
+        case "event": {
           const res = await axios.post("http://localhost:3000/api/event", {
             eveNameInput: input,
             eveDescInput: "Event description",
           });
 
           const createdEvent = res.data;
-
-          // 🔥 redirect to hierarchy page
+          closeModal(); // optional if ModalInput already closes
           navigate(`/admin/event/${createdEvent.id}`);
-
           break;
+        }
 
         case "competition": {
           const res = await api.createCompetition({
@@ -81,11 +57,8 @@ function Admin() {
             comNameInput: input,
             comDescInput: "Competition Description",
           });
-          dispatch({
-            type: "ADD_COMPETITION",
-            eventId,
-            payload: res.data,
-          });
+
+          dispatch({ type: "ADD_COMPETITION", eventId, payload: res.data });
           break;
         }
 
@@ -94,22 +67,7 @@ function Admin() {
             comFKey: competitionId,
             catNameInput: input,
             catDescInput: "Category Description",
-          });
-          dispatch({
-            type: "ADD_CATEGORY",
-            eventId,
-            competitionId,
-            payload: res.data,
-          });
-          break;
-        }
-
-        case "category": {
-          const res = await api.createCategory({
-            comFKey: competitionId,
-            catNameInput: input,
-            catDescInput: "Category Description",
-            parentCategoryId: null, // ✅ root
+            parentCategoryId: null,
           });
 
           dispatch({
@@ -118,7 +76,6 @@ function Admin() {
             competitionId,
             payload: res.data,
           });
-
           break;
         }
 
@@ -127,7 +84,7 @@ function Admin() {
             comFKey: competitionId,
             catNameInput: input,
             catDescInput: "Subcategory Description",
-            parentCategoryId: categoryId, // ✅ parent
+            parentCategoryId: categoryId,
           });
 
           dispatch({
@@ -137,7 +94,6 @@ function Admin() {
             categoryId,
             payload: res.data,
           });
-
           break;
         }
 
@@ -154,17 +110,14 @@ function Admin() {
             eventId,
             competitionId,
             categoryId,
-            payload: res.data, // FULL DB OBJECT
+            payload: res.data,
           });
           break;
         }
 
+        // edits...
         case "editEvent":
-          dispatch({
-            type: "UPDATE_EVENT",
-            eventId,
-            payload: input,
-          });
+          dispatch({ type: "UPDATE_EVENT", eventId, payload: input });
           break;
 
         case "editCompetition":
@@ -180,8 +133,8 @@ function Admin() {
           dispatch({
             type: "UPDATE_CATEGORY",
             eventId,
-            categoryId,
             competitionId,
+            categoryId,
             payload: input,
           });
           break;
@@ -190,15 +143,13 @@ function Admin() {
           dispatch({
             type: "UPDATE_CHOICE",
             eventId,
+            competitionId,
             categoryId,
             choiceId,
-            competitionId,
             payload: input,
           });
           break;
       }
-
-      modalRef.current.close();
     } catch (error) {
       console.error("API error:", error);
       alert("Failed to save item!");
@@ -241,32 +192,22 @@ function Admin() {
 
   return (
     <div>
-      {/* Modal */}
-      <ModalInput
-        ref={modalRef}
-        type={modalConfig.type}
-        onConfirm={(input) => handleConfirm(input)}
-      />
-      <button
-        className="btn btn-soft btn-primary"
-        onClick={() => openModal("event")}
-      >
-        Add Event
-      </button>
-
+      <ModalInput onConfirm={handleConfirm} />
       {/*  Hierarchy */}
       {events.length > 0 && (
         <Hierarchy
           events={events}
-          onAddCompetition={(eventId) => openModal("competition", eventId)}
+          onAddCompetition={(eventId) => {
+            openModal("competition", eventId);
+          }}
           onAddCategory={(eventId, competitionId) =>
             openModal("category", eventId, competitionId)
           }
-          onAddChoice={(eventId, categoryId, competitionId) =>
-            openModal("choice", eventId, categoryId, competitionId)
+          onAddChoice={(eventId, competitionId, categoryId) =>
+            openModal("choice", eventId, competitionId, categoryId)
           }
-          onAddSubCategory={(eventId, categoryId, competitionId) =>
-            openModal("subCategory", eventId, categoryId, competitionId)
+          onAddSubCategory={(eventId, competitionId, categoryId) =>
+            openModal("subCategory", eventId, competitionId, categoryId)
           }
           onDelete={handleDelete}
           // ✅ EDIT handlers with defaultValue
@@ -283,7 +224,7 @@ function Admin() {
               defaultValue,
             )
           }
-          onEditCategory={(eventId, categoryId, competitionId, defaultValue) =>
+          onEditCategory={(eventId, competitionId, categoryId, defaultValue) =>
             openModal(
               "editCategory",
               eventId,
@@ -295,17 +236,17 @@ function Admin() {
           }
           onEditChoice={(
             eventId,
+            competitionId,
             categoryId,
             choiceId,
-            competitionId,
             defaultValue,
           ) =>
             openModal(
               "editChoice",
               eventId,
+              competitionId,
               categoryId,
               choiceId,
-              competitionId,
               defaultValue,
             )
           }
@@ -314,5 +255,4 @@ function Admin() {
     </div>
   );
 }
-
 export default Admin;
