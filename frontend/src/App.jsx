@@ -7,6 +7,7 @@ import Admin from "./pages/Admin.jsx";
 import EventHierarchy from "./pages/EventHierarchy.jsx";
 import Events from "./pages/Events.jsx";
 import Competitions from "./pages/Competitions.jsx";
+import Leaderboard from "./pages/Leaderboard.jsx";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           path="/events/competitions/:eventId"
           element={<Competitions />}
         />
+        <Route path="/score" element={<Leaderboard />} />
       </Routes>
 
       <Toaster />
