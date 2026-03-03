@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from "react";
 import { useEventStore } from "../stores/useEventStore";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { UserPlus, Users, ListPlus } from "lucide-react";
 
 function CompetitionList() {
   const { eventId } = useParams(); // ✅ read param from route
+  const navigate = useNavigate();
 
   const {
     allEvents,
@@ -161,6 +162,19 @@ function CompetitionList() {
               >
                 <ListPlus size={16} className="text-cyan-600" />
                 <span className="text-cyan-700 font-medium">Add Criteria</span>
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/leaderboard/${item.id}`);
+                }}
+                className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-cyan-500/20 transition-colors"
+                title="View Leaderboard"
+              >
+                <span className="text-cyan-700 font-medium">
+                  View Leaderboard
+                </span>
               </button>
             </div>
           </div>

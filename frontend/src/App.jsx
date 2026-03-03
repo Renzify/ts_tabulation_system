@@ -21,7 +21,7 @@ function App() {
           path="/events/competitions/:eventId"
           element={<Competitions />}
         />
-        <Route path="/score" element={<Leaderboard />} />
+        <Route path="/leaderboard/:choiceId" element={<Leaderboard />} />
       </Routes>
 
       <Toaster />
