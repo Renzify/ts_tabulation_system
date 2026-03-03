@@ -6,6 +6,7 @@ import Home from "./pages/Home.jsx";
 import EventHierarchy from "./pages/EventHierarchy.jsx";
 import Events from "./pages/Events.jsx";
 import Competitions from "./pages/Competitions.jsx";
+import Participants from "./pages/Participants.jsx";
 import Leaderboard from "./pages/Leaderboard.jsx";
 
 function App() {
@@ -18,6 +19,10 @@ function App() {
         <Route
           path="/events/competitions/:eventId"
           element={<Competitions />}
+        />
+        <Route
+          path="/events/competitions/participants/:choiceId"
+          element={<Participants />}
         />
         <Route path="/leaderboard/:choiceId" element={<Leaderboard />} />
       </Routes>

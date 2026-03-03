@@ -1,12 +1,18 @@
 import { UserPlus, Users, ListPlus } from "lucide-react";
 import { useNavigate } from "react-router";
 
-function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
+function CompetitionRow({
+  item,
+  onClick,
+  onAddJudge,
+  onAddContestant,
+  onAddCriteria,
+}) {
   const navigate = useNavigate();
 
   return (
     <div
-      onClick={() => console.log("Selected choice:", item.choiceName)}
+      onClick={onClick}
       className="bg-white border border-cyan-100 shadow-sm p-4 rounded-lg flex justify-between items-center hover:bg-cyan-50 transition-colors cursor-pointer"
     >
       {/* Left: Info */}
@@ -22,7 +28,7 @@ function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
       {/* Divider */}
       <div className="h-6 border-l border-cyan-200 mx-4" />
 
-      {/* Right: Action Buttons */}
+      {/* Right: Buttons */}
       <div className="flex items-center gap-2 flex-wrap justify-end text-sm">
         <button
           onClick={(e) => onAddJudge(e, item)}
