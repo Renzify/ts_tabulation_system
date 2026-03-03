@@ -11,4 +11,10 @@ export const api = {
   createContestant: (data) => axios.post(`${API_BASE}/contestant`, data),
   createCriteria: (data) => axios.post(`${API_BASE}/criterion`, data),
   createScore: (data) => axios.post(`${API_BASE}/score`, data),
+
+  updateEvent: (id, data) => axios.put(`${API_BASE}/event/${id}`, data),
+  updateCompetition: (id, data) =>
+    axios.put(`${API_BASE}/competition/${id}`, data),
+  updateCategory: (id, data) => axios.put(`${API_BASE}/category/${id}`, data),
+  updateChoice: (id, data) => axios.put(`${API_BASE}/choice/${id}`, data),
 };
