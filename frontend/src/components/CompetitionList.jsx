@@ -108,7 +108,7 @@ function CompetitionList() {
       {/* Choice List */}
       {choiceDetails.length === 0 ? (
         <p className="text-center text-slate-500">
-          No competitions or choices found for this event.
+          No competitions for this event.
         </p>
       ) : (
         choiceDetails.map((item) => (
