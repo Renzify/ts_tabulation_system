@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import { useEventStore } from "../stores/useEventStore";
 import { useParams, useNavigate } from "react-router";
-import { UserPlus, Users, ListPlus } from "lucide-react";
 
 import CompetitionRow from "./CompetitionRow";
 import AddJudgeModal from "./AddJudgeModal";
 import AddContestantModal from "./AddContestantModal";
 
-
 function CompetitionList() {
   const { eventId } = useParams(); // ✅ read param from route
   const navigate = useNavigate();
-
 
   const {
     selectedEvent,
@@ -78,16 +75,6 @@ function CompetitionList() {
             />
           ))
         )}
-          <button
-    onClick={(e) => {
-      e.stopPropagation();
-      navigate(`/leaderboard/${item.id}`);
-    }}
-    className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-cyan-500/20 transition-colors"
-    title="View Leaderboard"
-  >
-    <span className="text-cyan-700 font-medium">View Leaderboard</span>
-  </button>
       </div>
 
       {/* Modals */}
