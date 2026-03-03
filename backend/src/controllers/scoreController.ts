@@ -4,6 +4,7 @@ import * as readQuery from "../db/queries/select.queries.ts";
 import * as updateQuery from "../db/queries/update.queries.ts";
 import * as deleteQuery from "../db/queries/delete.queries.ts";
 import * as idReadQuery from "../db/queries/id-select.queries.ts";
+import * as leaderBoardQuery from "../db/queries/leaderboard.queries.ts";
 import { scores } from "../db/schema.ts";
 
 // select Score
@@ -45,6 +46,25 @@ export async function createScore(req: Request, res: Response) {
       contestantId: contestantFKey,
       criteriaId: criteriatFKey,
       scores: scoreInput,
+    });
+
+    // 2️⃣ Fetch contestant to get choiceId
+    const contestantResult =
+      await idReadQuery.getContestantById(contestantFKey);
+
+    if (!contestantResult.length) {
+      return res.status(404).json({ message: "Contestant not found" });
+    }
+
+    const contestantChoiceId = contestantResult[0].choiceId;
+
+    // 3️⃣ Get updated leaderboard
+    const leaderboard =
+      await leaderBoardQuery.getLeaderboardByChoice(contestantChoiceId);
+
+    res.status(201).json({
+      createdScore,
+      leaderboard,
     });
 
     res.status(201).json(createdScore);

@@ -77,7 +77,7 @@ export const contestant = pgTable("contestant", {
 
 export const criteria = pgTable("criteria", {
   id: uuid("id").defaultRandom().primaryKey(),
-  choiceId: uuid("criteria_id")
+  choiceId: uuid("choice_id")
     .notNull()
     .references(() => choice.id, { onDelete: "cascade" }),
   criterion: text("criterion").notNull(),
@@ -90,7 +90,7 @@ export const scores = pgTable("scores", {
   id: uuid("id").defaultRandom().primaryKey(),
   judgeId: uuid("judge_id")
     .notNull()
-    .references(() => choice.id, { onDelete: "cascade" }),
+    .references(() => judge.id, { onDelete: "cascade" }),
   contestantId: uuid("contestant_id")
     .notNull()
     .references(() => contestant.id, { onDelete: "cascade" }),
@@ -98,6 +98,8 @@ export const scores = pgTable("scores", {
     .notNull()
     .references(() => criteria.id, { onDelete: "cascade" }),
   scores: real().notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
 });
 
 // relations
