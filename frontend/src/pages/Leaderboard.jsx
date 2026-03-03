@@ -1,57 +1,26 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
+import { useParams } from "react-router";
+import { useEventStore } from "../stores/useEventStore";
+import LeaderboardList from "../components/LeaderboardList";
 
 function Leaderboard() {
-  const [leaders, setLeaders] = useState([]);
-
-  const choiceId = "903d2f04-b80c-4fce-bf60-8077a59e0f22";
-
-  const fetchLeaderboard = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/api/leaderboard/${choiceId}`,
-      );
-      setLeaders(res.data);
-    } catch (err) {
-      console.error("Failed to fetch leaderboard", err);
-    }
-  };
+  const { choiceId } = useParams();
+  const { getLeaderboardByChoice } = useEventStore();
 
   useEffect(() => {
-    fetchLeaderboard();
-
-    // 🔥 Auto refresh every 2 seconds
-    const interval = setInterval(() => {
-      fetchLeaderboard();
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
+    if (choiceId) {
+      getLeaderboardByChoice(choiceId);
+    }
+  }, [choiceId, getLeaderboardByChoice]);
 
   return (
-    <div>
-      <h1>Leaderboard</h1>
+    <div className="flex-1 overflow-y-auto p-4">
+      {/* Top Bar */}
+      <div className="mb-6">
+        <BackButton />
+      </div>
 
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Total Average</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaders.map((person, index) => (
-            <tr key={person.contestantId}>
-              <td>{index + 1}</td>
-              <td>
-                {person.firstName} {person.lastName}
-              </td>
-              <td>{Number(person.totalAverage).toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <LeaderboardList />
     </div>
   );
 }

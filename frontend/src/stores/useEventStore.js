@@ -12,6 +12,7 @@ export const useEventStore = create((set, get) => ({
   allChoices: [],
   allJudges: [],
   allContestants: [],
+  allLeaderboard: [],
 
   selectedEvent: null,
   selectedChoice: null,
@@ -71,6 +72,17 @@ export const useEventStore = create((set, get) => ({
       set({ allContestants: res.data });
     } catch (error) {
       toast.error(error.response.data.message);
+    }
+  },
+
+  getLeaderboardByChoice: async (choiceId) => {
+    try {
+      const res = await axiosInstance.get(`/leaderboard/${choiceId}`);
+      set({ allLeaderboard: res.data });
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to load leaderboard",
+      );
     }
   },
 
