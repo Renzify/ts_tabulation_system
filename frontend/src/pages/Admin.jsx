@@ -2,7 +2,7 @@ import { useRef, useState, useReducer, useEffect } from "react";
 import { Hierarchy } from "./HierarchyTree";
 import ModalInput from "../components/Modals";
 import eventsReducer from "../reducers/eventsReducer";
-import { api } from "../lib/axios";
+import { api } from "../lib/api";
 import axios from "axios";
 
 function Admin() {
