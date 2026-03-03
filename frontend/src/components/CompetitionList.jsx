@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useEventStore } from "../stores/useEventStore";
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 
 import CompetitionRow from "./CompetitionRow";
 import AddJudgeModal from "./AddJudgeModal";
 import AddContestantModal from "./AddContestantModal";
+import AddCriteriaModal from "./AddCriteriaModal";
 
 function CompetitionList() {
   const navigate = useNavigate();
   const { eventId } = useParams();
+
 
   const {
     selectedEvent,
@@ -20,6 +22,7 @@ function CompetitionList() {
 
   const [isJudgeModalOpen, setJudgeModalOpen] = useState(false);
   const [isContestantModalOpen, setContestantModalOpen] = useState(false);
+  const [criteriaModalOpen, setCriteriaModalOpen] = useState(false);
 
   useEffect(() => {
     if (eventId) initializeEventData(eventId);
@@ -50,7 +53,7 @@ function CompetitionList() {
   const handleAddCriteria = (e, item) => {
     e.stopPropagation();
     setSelectedChoice(item);
-    console.log("Add Criteria for:", item.choiceName);
+    setCriteriaModalOpen(true);
   };
 
   const handleRowClick = (item) => {
@@ -92,6 +95,12 @@ function CompetitionList() {
       <AddContestantModal
         isOpen={isContestantModalOpen}
         onClose={() => setContestantModalOpen(false)}
+        choiceId={selectedChoice?.id}
+      />
+
+      <AddCriteriaModal
+        isOpen={criteriaModalOpen}
+        onClose={() => setCriteriaModalOpen(false)}
         choiceId={selectedChoice?.id}
       />
     </>
