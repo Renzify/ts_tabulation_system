@@ -1,4 +1,4 @@
-import { useRef, useState, useReducer, useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { Hierarchy } from "./HierarchyTree";
 import ModalInput from "../components/Modals";
 import eventsReducer from "../reducers/eventsReducer";
@@ -8,8 +8,6 @@ import { useNavigate } from "react-router";
 import { useModalStore } from "../stores/useModalStore";
 
 function Admin() {
-  const { type, eventId, competitionId, categoryId, choiceId, closeModal } =
-    useModalStore.getState(); // ✅ grab latest modal state
   const [events, dispatch] = useReducer(eventsReducer, []);
   const navigate = useNavigate();
   const { openModal } = useModalStore();
@@ -194,17 +192,7 @@ function Admin() {
 
   return (
     <div>
-      <button
-        className="btn btn-soft btn-primary"
-        onClick={() => {
-          console.log("Clicked");
-          openModal("event");
-        }}
-      >
-        Add Event
-      </button>
       <ModalInput onConfirm={handleConfirm} />
-
       {/*  Hierarchy */}
       {events.length > 0 && (
         <Hierarchy
@@ -267,5 +255,4 @@ function Admin() {
     </div>
   );
 }
-
 export default Admin;
