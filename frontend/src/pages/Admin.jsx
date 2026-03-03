@@ -4,6 +4,7 @@ import ModalInput from "../components/Modals";
 import eventsReducer from "../reducers/eventsReducer";
 import { api } from "../lib/api";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 function Admin() {
   useEffect(() => {
@@ -31,13 +32,13 @@ function Admin() {
     eventId: null,
     categoryId: null,
   });
-
+  const navigate = useNavigate();
   // A function to open the modal
   const openModal = (
     type,
     eventId = null,
-    competitionId = null, // ← was categoryId
-    categoryId = null, // ← shift down
+    competitionId = null,
+    categoryId = null,
     choiceId = null,
     defaultValue = "",
   ) => {
@@ -49,7 +50,9 @@ function Admin() {
       choiceId,
       defaultValue,
     });
-    modalRef.current.open(defaultValue);
+
+    // Pass type to modal explicitly
+    modalRef.current.open(defaultValue, type);
   };
 
   const handleConfirm = async (input) => {
@@ -59,14 +62,18 @@ function Admin() {
 
     try {
       switch (type) {
-        case "event": {
-          const res = await api.createEvent({
+        case "event":
+          const res = await axios.post("http://localhost:3000/api/event", {
             eveNameInput: input,
-            eveDescInput: "Event Description", // ← you can extend modal to capture desc
+            eveDescInput: "Event description",
           });
-          dispatch({ type: "ADD_EVENT", payload: res.data });
+
+          const createdEvent = res.data;
+
+          // 🔥 redirect to hierarchy page
+          navigate(`/admin/event/${createdEvent.id}`);
+
           break;
-        }
 
         case "competition": {
           const res = await api.createCompetition({
@@ -246,23 +253,7 @@ function Admin() {
       >
         Add Event
       </button>
-      {/* <div>
-        {events.length === 0 ? (
-          <p>No events found.</p>
-        ) : (
-          events.map((eventItem) => (
-            <div key={eventItem.id} className="event-card border p-2 mb-2">
-              <h2 className="font-bold">{eventItem.name}</h2>
-              <button
-                onClick={() => console.log("Edit event", eventItem.id)}
-                className="btn btn-primary mt-1"
-              >
-                Edit
-              </button>
-            </div>
-          ))
-        )}
-      </div> */}
+
       {/*  Hierarchy */}
       {events.length > 0 && (
         <Hierarchy
@@ -278,20 +269,44 @@ function Admin() {
             openModal("subCategory", eventId, categoryId, competitionId)
           }
           onDelete={handleDelete}
-          onEditEvent={(eventId) => openModal("editEvent", eventId)}
-          onEditCompetition={(eventId, competitionId) =>
-            openModal("editCompetition", eventId, competitionId)
+          // ✅ EDIT handlers with defaultValue
+          onEditEvent={(eventId, defaultValue) =>
+            openModal("editEvent", eventId, null, null, null, defaultValue)
           }
-          onEditCategory={(eventId, categoryId, competitionId) =>
-            openModal("editCategory", eventId, categoryId, competitionId)
+          onEditCompetition={(eventId, competitionId, defaultValue) =>
+            openModal(
+              "editCompetition",
+              eventId,
+              competitionId,
+              null,
+              null,
+              defaultValue,
+            )
           }
-          onEditChoice={(eventId, categoryId, choiceId, competitionId) =>
+          onEditCategory={(eventId, categoryId, competitionId, defaultValue) =>
+            openModal(
+              "editCategory",
+              eventId,
+              competitionId,
+              categoryId,
+              null,
+              defaultValue,
+            )
+          }
+          onEditChoice={(
+            eventId,
+            categoryId,
+            choiceId,
+            competitionId,
+            defaultValue,
+          ) =>
             openModal(
               "editChoice",
               eventId,
               categoryId,
               choiceId,
               competitionId,
+              defaultValue,
             )
           }
         />

@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router";
 import Home from "./pages/Home.jsx";
 import Admin from "./pages/Admin.jsx";
-import EventHierarchy from "./pages/Testing.jsx";
+import EventHierarchy from "./pages/EventHierarchy.jsx";
 
 function App() {
   return (
@@ -11,12 +11,13 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<Admin />} />
         {/* 👇 Force show specific event */}
-        <Route
+        {/* <Route
           path="/test"
           element={
             <EventHierarchy eventId="8c2b1167-f938-42f1-9abf-340feffeb620" />
           }
-        />
+        /> */}
+        <Route path="/admin/event/:eventId" element={<EventHierarchy />} />
       </Routes>
     </div>
   );
