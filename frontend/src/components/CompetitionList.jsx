@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useEventStore } from "../stores/useEventStore";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 
 import CompetitionRow from "./CompetitionRow";
 import AddJudgeModal from "./AddJudgeModal";
@@ -10,7 +10,6 @@ import AddCriteriaModal from "./AddCriteriaModal";
 function CompetitionList() {
   const navigate = useNavigate();
   const { eventId } = useParams();
-
 
   const {
     selectedEvent,
