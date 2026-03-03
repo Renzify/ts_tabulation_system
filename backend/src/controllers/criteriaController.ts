@@ -38,10 +38,10 @@ export async function getCriteriaById(req: Request, res: Response) {
 // create Criteria
 export async function createCriteria(req: Request, res: Response) {
   try {
-    const { choiceFKey, criterionName, criterionWeight } = req.body;
+    const { choFKey, criterionName, criterionWeight } = req.body;
 
     const createdCriteria = await createQuery.createCriteria({
-      choiceId: choiceFKey,
+      choiceId: choFKey,
       criterion: criterionName,
       weight: criterionWeight,
     });
