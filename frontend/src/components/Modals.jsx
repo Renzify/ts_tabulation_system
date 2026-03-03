@@ -57,15 +57,17 @@ const ModalInput = forwardRef(({ type, onConfirm }, ref) => {
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentLabel = modalLabels[type] ?? {};
-
   useImperativeHandle(ref, () => ({
-    open: (defaultValue = "") => {
+    open: (defaultValue = "", modalType = type) => {
       setInput(defaultValue);
+      setModalType(modalType); // <- you need a local state for type
       setIsOpen(true);
     },
     close: () => setIsOpen(false),
   }));
+
+  const [modalType, setModalType] = useState(type);
+  const currentLabel = modalLabels[modalType] ?? {};
 
   const handleConfirm = () => {
     if (input.trim() === "") return;

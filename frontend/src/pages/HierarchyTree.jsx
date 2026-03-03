@@ -202,7 +202,14 @@ export function CategoryNode({
         hasChildren={hasChildren}
         isExpanded={expanded}
         onToggle={() => hasChildren && setExpanded(!expanded)}
-        onEdit={() => onEditCategory(eventId, competitionId, category.id)}
+        onEdit={() => {
+          console.log("Clicked edit category", {
+            eventId,
+            competitionId,
+            categoryId: category.id,
+          });
+          onEditCategory(eventId, competitionId, category.id);
+        }}
         onDelete={() =>
           onDelete("category", eventId, competitionId, category.id)
         }
@@ -217,7 +224,13 @@ export function CategoryNode({
               name={choice.name}
               hasChildren={false}
               onEdit={() =>
-                onEditChoice(eventId, competitionId, category.id, choice.id)
+                onEditChoice(
+                  eventId,
+                  category.id,
+                  choice.id,
+                  competitionId,
+                  choice.name,
+                )
               }
               onDelete={() =>
                 onDelete(
@@ -287,7 +300,9 @@ export function CompetitionNode({
         hasChildren={true}
         isExpanded={expanded}
         onToggle={() => setExpanded(!expanded)}
-        onEdit={() => onEditCompetition(eventId, competition.id)}
+        onEdit={() =>
+          onEditCompetition(eventId, competition.id, competition.name)
+        }
         onDelete={() => onDelete("competition", eventId, competition.id)}
       />
 
@@ -319,7 +334,62 @@ export function CompetitionNode({
     </div>
   );
 }
+function EventNode({
+  event,
+  onAddCompetition,
+  onAddCategory,
+  onAddChoice,
+  onAddSubCategory,
+  onDelete,
+  onEditCompetition,
+  onEditEvent,
+  onEditCategory,
+  onEditChoice,
+}) {
+  const [expanded, setExpanded] = useState(true);
+  const hasChildren = event.competitions?.length > 0;
 
+  return (
+    <div className="flex-shrink-0 bg-slate-50 border border-slate-200 rounded-3xl p-4">
+      <NodeCard
+        level="event"
+        name={event.name}
+        hasChildren={hasChildren}
+        isExpanded={expanded}
+        onToggle={() => setExpanded(!expanded)}
+        onEdit={() => onEditEvent(event.id, event.name)}
+        onDelete={() => onDelete("event", event.id)}
+      />
+
+      {expanded && (
+        <TreeBranch trackColor="bg-amber-300">
+          {event.competitions?.map((competition) => (
+            <CompetitionNode
+              key={competition.id}
+              competition={competition}
+              eventId={event.id}
+              onAddCategory={onAddCategory}
+              onAddChoice={onAddChoice}
+              onAddSubCategory={onAddSubCategory}
+              onDelete={onDelete}
+              onEditCompetition={onEditCompetition}
+              onEditCategory={onEditCategory}
+              onEditChoice={onEditChoice}
+            />
+          ))}
+
+          <div className="pt-1">
+            <AddButton
+              label="Add Competition"
+              color="blue"
+              onClick={() => onAddCompetition(event.id)}
+            />
+          </div>
+        </TreeBranch>
+      )}
+    </div>
+  );
+}
 export function Hierarchy({
   events,
   onAddCompetition,
@@ -335,7 +405,6 @@ export function Hierarchy({
   return (
     <div className="flex justify-center mt-8 px-4 w-full">
       <div className="w-full max-w-3xl flex flex-col h-[80vh]">
-        {/* Header */}
         <div className="mb-6 flex-shrink-0">
           <h2 className="text-xl font-bold text-slate-800 tracking-tight">
             Structure Hierarchy
@@ -345,56 +414,22 @@ export function Hierarchy({
           </p>
         </div>
 
-        {/* Tree */}
         <div className="flex flex-col gap-4 overflow-y-auto overflow-x-hidden pr-2 pb-4">
-          {events.map((event) => {
-            const [expanded, setExpanded] = useState(true);
-            const hasChildren = event.competitions?.length > 0;
-
-            return (
-              <div
-                key={event.id}
-                className="flex-shrink-0 bg-slate-50 border border-slate-200 rounded-3xl p-4"
-              >
-                <NodeCard
-                  level="event"
-                  name={event.name}
-                  hasChildren={hasChildren}
-                  isExpanded={expanded}
-                  onToggle={() => setExpanded(!expanded)}
-                  onEdit={() => onEditEvent(event.id)}
-                  onDelete={() => onDelete("event", event.id)}
-                />
-
-                {expanded && (
-                  <TreeBranch trackColor="bg-amber-300">
-                    {event.competitions?.map((competition) => (
-                      <CompetitionNode
-                        key={competition.id}
-                        competition={competition}
-                        eventId={event.id}
-                        onAddCategory={onAddCategory}
-                        onAddChoice={onAddChoice}
-                        onAddSubCategory={onAddSubCategory}
-                        onDelete={onDelete}
-                        onEditCompetition={onEditCompetition}
-                        onEditCategory={onEditCategory}
-                        onEditChoice={onEditChoice}
-                      />
-                    ))}
-
-                    <div className="pt-1">
-                      <AddButton
-                        label="Add Competition"
-                        color="blue"
-                        onClick={() => onAddCompetition(event.id)}
-                      />
-                    </div>
-                  </TreeBranch>
-                )}
-              </div>
-            );
-          })}
+          {events.map((event) => (
+            <EventNode
+              key={event.id}
+              event={event}
+              onAddCompetition={onAddCompetition}
+              onAddCategory={onAddCategory}
+              onAddChoice={onAddChoice}
+              onAddSubCategory={onAddSubCategory}
+              onDelete={onDelete}
+              onEditCompetition={onEditCompetition}
+              onEditEvent={onEditEvent}
+              onEditCategory={onEditCategory}
+              onEditChoice={onEditChoice}
+            />
+          ))}
         </div>
       </div>
     </div>
