@@ -47,6 +47,17 @@ function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
           <ListPlus size={16} className="text-cyan-600" />
           <span className="text-cyan-700 font-medium">Add Criteria</span>
         </button>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/leaderboard/${item.id}`);
+          }}
+          className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-cyan-500/20 transition-colors"
+          title="View Leaderboard"
+        >
+          <span className="text-cyan-700 font-medium">View Leaderboard</span>
+        </button>
       </div>
     </div>
   );
