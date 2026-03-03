@@ -1,7 +1,16 @@
 import type { Request, Response } from "express";
 import { db } from "../index.ts";
 import { eq } from "drizzle-orm";
-import { event, competition, category, choice, scores } from "../schema.ts";
+import {
+  event,
+  competition,
+  category,
+  choice,
+  scores,
+  contestant,
+  judge,
+  criteria,
+} from "../schema.ts";
 
 // Get By Id Queries
 
@@ -28,6 +37,21 @@ export const getChoiceById = async (id: string) => {
 // Get Score By Id
 export const getScoreById = async (id: string) => {
   return await db.select().from(scores).where(eq(scores.id, id));
+};
+
+// Get Contestant By Id
+export const getContestantById = async (id: string) => {
+  return await db.select().from(contestant).where(eq(contestant.id, id));
+};
+
+// Get Judge By Id
+export const getJudgeById = async (id: string) => {
+  return await db.select().from(judge).where(eq(judge.id, id));
+};
+
+// Get Criteria By Id
+export const getCriteriaById = async (id: string) => {
+  return await db.select().from(criteria).where(eq(criteria.id, id));
 };
 
 // Get Event with all its nested competitions, categories, and choices
