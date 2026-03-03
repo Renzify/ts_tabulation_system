@@ -1,17 +1,15 @@
-import { useNavigate } from "react-router";
 import { UserPlus, Users, ListPlus } from "lucide-react";
 
-function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
-  const navigate = useNavigate(); // ✅ add navigation hook
-
-  const handleLeaderboardClick = (e) => {
-    e.stopPropagation();
-    navigate(`/leaderboard/${item.id}`); // ✅ redirect safely
-  };
-
+function CompetitionRow({
+  item,
+  onClick,
+  onAddJudge,
+  onAddContestant,
+  onAddCriteria,
+}) {
   return (
     <div
-      onClick={() => console.log("Selected choice:", item.choiceName)}
+      onClick={onClick}
       className="bg-white border border-cyan-100 shadow-sm p-4 rounded-lg flex justify-between items-center hover:bg-cyan-50 transition-colors cursor-pointer"
     >
       {/* Left: Info */}
@@ -27,7 +25,7 @@ function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
       {/* Divider */}
       <div className="h-6 border-l border-cyan-200 mx-4" />
 
-      {/* Right: Action Buttons */}
+      {/* Right: Buttons */}
       <div className="flex items-center gap-2 flex-wrap justify-end text-sm">
         <button
           onClick={(e) => onAddJudge(e, item)}
@@ -54,15 +52,6 @@ function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
         >
           <ListPlus size={16} className="text-cyan-600" />
           <span className="text-cyan-700 font-medium">Add Criteria</span>
-        </button>
-
-        {/* ✅ View Leaderboard Button */}
-        <button
-          onClick={handleLeaderboardClick}
-          className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-cyan-500/20 transition-colors"
-          title="View Leaderboard"
-        >
-          <span className="text-cyan-700 font-medium">View Leaderboard</span>
         </button>
       </div>
     </div>

@@ -7,8 +7,8 @@ import AddJudgeModal from "./AddJudgeModal";
 import AddContestantModal from "./AddContestantModal";
 
 function CompetitionList() {
-  const { eventId } = useParams(); // ✅ read param from route
   const navigate = useNavigate();
+  const { eventId } = useParams();
 
   const {
     selectedEvent,
@@ -53,6 +53,11 @@ function CompetitionList() {
     console.log("Add Criteria for:", item.choiceName);
   };
 
+  const handleRowClick = (item) => {
+    setSelectedChoice(item);
+    navigate(`/events/competitions/participants/${item.id}`); // ✅ updated path
+  };
+
   return (
     <>
       <div className="max-w-5xl mx-auto mt-10 space-y-3">
@@ -69,6 +74,7 @@ function CompetitionList() {
             <CompetitionRow
               key={item.id}
               item={item}
+              onClick={() => handleRowClick(item)}
               onAddJudge={handleAddJudge}
               onAddContestant={handleAddContestant}
               onAddCriteria={handleAddCriteria}

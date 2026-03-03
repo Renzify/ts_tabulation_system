@@ -3,7 +3,6 @@ import { useModalStore } from "../stores/useModalStore";
 import { useNavigate } from "react-router";
 import AddEventButton from "../components/AddEventButton";
 import EventsList from "../components/EventList";
-import axios from "axios";
 import { axiosInstance } from "../lib/axios";
 
 function Events() {
