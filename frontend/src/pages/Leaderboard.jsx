@@ -16,9 +16,7 @@ function Leaderboard() {
   return (
     <div className="flex-1 overflow-y-auto p-4">
       {/* Top Bar */}
-      <div className="mb-6">
-        <BackButton />
-      </div>
+      <div className="mb-6"></div>
 
       <LeaderboardList />
     </div>

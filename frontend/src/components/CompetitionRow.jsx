@@ -1,6 +1,14 @@
+import { useNavigate } from "react-router";
 import { UserPlus, Users, ListPlus } from "lucide-react";
 
 function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
+  const navigate = useNavigate(); // ✅ add navigation hook
+
+  const handleLeaderboardClick = (e) => {
+    e.stopPropagation();
+    navigate(`/leaderboard/${item.id}`); // ✅ redirect safely
+  };
+
   return (
     <div
       onClick={() => console.log("Selected choice:", item.choiceName)}
@@ -48,11 +56,9 @@ function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
           <span className="text-cyan-700 font-medium">Add Criteria</span>
         </button>
 
+        {/* ✅ View Leaderboard Button */}
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/leaderboard/${item.id}`);
-          }}
+          onClick={handleLeaderboardClick}
           className="flex items-center gap-1 px-3 py-1 rounded-md hover:bg-cyan-500/20 transition-colors"
           title="View Leaderboard"
         >
