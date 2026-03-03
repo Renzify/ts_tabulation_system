@@ -5,6 +5,7 @@ import ModalInput from "../components/Modals";
 import { useModalStore } from "../stores/useModalStore";
 import { axiosInstance } from "../lib/axios";
 import { api } from "../lib/api";
+import BackButton from "../components/BackButton";
 
 function EventHierarchy({ input }) {
   const { eventId } = useParams();
@@ -135,6 +136,10 @@ function EventHierarchy({ input }) {
 
   return (
     <div>
+      <div className="m-4">
+        <BackButton />
+      </div>
+
       <ModalInput onConfirm={handleConfirm} input={input} />
       <Hierarchy
         events={[eventData]}

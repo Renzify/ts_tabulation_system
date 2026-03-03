@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import AddEventButton from "../components/AddEventButton";
 import EventsList from "../components/EventList";
 import axios from "axios";
+import BackButton from "../components/BackButton";
 
 function Events() {
   const navigate = useNavigate();
@@ -25,6 +26,10 @@ function Events() {
 
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-2">
+      <div className="mb-6">
+        <BackButton />
+      </div>
+
       <ModalInput onConfirm={handleConfirm} />
       <AddEventButton />
       <EventsList />

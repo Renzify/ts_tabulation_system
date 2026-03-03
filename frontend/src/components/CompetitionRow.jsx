@@ -1,6 +1,10 @@
 import { UserPlus, Users, ListPlus } from "lucide-react";
+import { useNavigate } from "react-router";
+import BackButton from "./BackButton";
 
 function CompetitionRow({ item, onAddJudge, onAddContestant, onAddCriteria }) {
+  const navigate = useNavigate();
+
   return (
     <div
       onClick={() => console.log("Selected choice:", item.choiceName)}

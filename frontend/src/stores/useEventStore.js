@@ -13,6 +13,7 @@ export const useEventStore = create((set, get) => ({
   allJudges: [],
   allContestants: [],
   allLeaderboard: [],
+  allCriteria: [],
 
   selectedEvent: null,
   selectedChoice: null,
@@ -72,6 +73,15 @@ export const useEventStore = create((set, get) => ({
       set({ allContestants: res.data });
     } catch (error) {
       toast.error(error.response.data.message);
+    }
+  },
+
+  getAllCriteria: async () => {
+    try {
+      const res = await axiosInstance.get("/criteria");
+      set({ allCriteria: res.data });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to load criteria");
     }
   },
 

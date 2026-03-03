@@ -6,6 +6,7 @@ import { api } from "../lib/api";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { useModalStore } from "../stores/useModalStore";
+import BackButton from "../components/BackButton";
 
 function Admin() {
   const [events, dispatch] = useReducer(eventsReducer, []);
@@ -192,6 +193,10 @@ function Admin() {
 
   return (
     <div>
+      <div className="m-6">
+        <BackButton />
+      </div>
+
       <ModalInput onConfirm={handleConfirm} />
       {/*  Hierarchy */}
       {events.length > 0 && (
