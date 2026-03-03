@@ -7,7 +7,12 @@ const BASE_URL =
 
 export const useEventStore = create((set, get) => ({
   allEvents: [],
+  allCompetitions: [],
+  allCategories: [],
   allChoices: [],
+  allJudges: [],
+  allContestants: [],
+
   selectedEvent: null,
   selectedChoice: null,
 
@@ -24,10 +29,46 @@ export const useEventStore = create((set, get) => ({
     }
   },
 
-  getAllChoice: async () => {
+  getAllCompetitions: async () => {
+    try {
+      const res = await axiosInstance.get("/competition");
+      set({ allCompetitions: res.data });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  getAllCategory: async () => {
+    try {
+      const res = await axiosInstance.get("/category");
+      set({ allCategories: res.data });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  getAllChoices: async () => {
     try {
       const res = await axiosInstance.get("/choice");
       set({ allChoices: res.data });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  getAllJudges: async () => {
+    try {
+      const res = await axiosInstance.get("/judge");
+      set({ allJudges: res.data });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  getAllContestants: async () => {
+    try {
+      const res = await axiosInstance.get("/contestant");
+      set({ allContestants: res.data });
     } catch (error) {
       toast.error(error.response.data.message);
     }
